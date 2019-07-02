@@ -19,7 +19,10 @@ default: &default
 
 development:
   <<: *default
-  database: serp_development
+  database: ct_serp
+  host: 13.250.127.183
+  username: flights
+  password: ClearTripCalendar
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
