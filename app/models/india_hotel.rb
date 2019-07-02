@@ -1,0 +1,2 @@
+class IndiaHotel < ApplicationRecord
+end
