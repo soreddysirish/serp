@@ -1,0 +1,2 @@
+class IndiaFlight < ApplicationRecord
+end
