@@ -40,6 +40,7 @@ class DetailsController < ApplicationController
 												"rank_above_twenty"=>@rank_above_twenty}
 				@categories << obj
 		end
+		render json: @categories
 	end
 	def fetch_details
 		@category_name = params[:category_name]
