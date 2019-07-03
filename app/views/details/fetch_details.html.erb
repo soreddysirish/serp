@@ -1,0 +1,69 @@
+<h2>Rank 1 Keywords</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">category Name</th>
+      <th scope="col">Keyword</th>
+      <th scope="col">google rank</th>
+      <th scope="col">bing rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      <% @rank_one_keywords.each do |kw|%>
+      <tr>
+      	<td><%= kw.category_name %></td>
+      	<td><%= kw.keyword %></td>
+      	<td><%= kw.google_rank %></td>
+      	<td><%= kw.bing_rank %></td>
+      	</tr>
+      <% end %>
+    
+  </tbody>
+</table>
+<h2>Keywords between rank 2-3</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">category Name</th>
+      <th scope="col">Keyword</th>
+      <th scope="col">google rank</th>
+      <th scope="col">bing rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      <% @rank_in_between_two_and_three.each do |kw|%>
+      <tr>
+      	<td><%= kw.category_name %></td>
+      	<td><%= kw.keyword %></td>
+      	<td><%= kw.google_rank %></td>
+      	<td><%= kw.bing_rank %></td>
+      	</tr>
+      <% end %>
+    
+  </tbody>
+</table>
+<h2>Keywords between rank 4-10</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">category Name</th>
+      <th scope="col">Keyword</th>
+      <th scope="col">google rank</th>
+      <th scope="col">bing rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      <% @rank_in_between_four_and_ten.each do |kw|%>
+      <tr>
+      	<td><%= kw.category_name %></td>
+      	<td><%= kw.keyword %></td>
+      	<td><%= kw.google_rank %></td>
+      	<td><%= kw.bing_rank %></td>
+      	</tr>
+      <% end %>
+    
+  </tbody>
+</table>
