@@ -33,14 +33,13 @@ class DetailsController < ApplicationController
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name)
 			column_headings = []
-			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date"}
+			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage"}
 			if category_exist
 				table_name = get_table_name(@category_name)
 				keywords = table_name.all.pluck(:keyword).uniq
-				main_obj = []
+				category_details_obj = []
 				start_date_ranks = {"mobile_rank"=> "","desktop_rank" => ""}
 				current_date_ranks = {"mobile_rank"=> "","desktop_rank" => ""}
-
 				keywords.each do |kw|
 				start_date_records = table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				first_record  = start_date_records.first
@@ -59,12 +58,19 @@ class DetailsController < ApplicationController
 					current_date_records = table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
 					current_date_records.each do |cr|
 						if cr.search_type == "sem"
-							current_date_ranks["mobile_rank"] = cr.google_rank
+							current_date_ranks["mobile_rank"] = cr.google_rank	
 						else
 							current_date_ranks["desktop_rank"] = cr.google_rank
 						end
 					end
-					main_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks }
+					if start_date_ranks["mobile_rank"] != 0 && start_date_ranks["desktop_rank"] != 0
+						mobile_rank_percentage = ((start_date_ranks["mobile_rank"] - current_date_ranks["mobile_rank"])/start_date_ranks["mobile_rank"])*100
+						desktop_rank_percentage = ((start_date_ranks["desktop_rank"] - current_date_ranks["desktop_rank"])/start_date_ranks["desktop_rank"])*100
+					end
+					percentage = {}
+					percentage["desktop_rank_percentage"] = desktop_rank_percentage rescue 0 
+					percentage["mobile_rank_percentage"] = mobile_rank_percentage rescue 0 
+					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage }
 
 					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
 					# mobile_current_date_records = table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
@@ -82,13 +88,13 @@ class DetailsController < ApplicationController
 					end
 				end
 			end
-			render json: {main_obj:  main_obj,headings: column_headings}
+			render json: {category_details_obj:  category_details_obj,headings: column_headings}
 		end
 		def get_table_name(key)
 			case key
 			when "AE Q1 Hotels Keywords"
 				table_name = Aeq1HotelsKeyword
-			when "Emirates - UAE Campaign"
+			when "Emirates UAE Campaign"
 				table_name = EmiratesUaeCampaign
 			when "India Flights"
 				table_name = IndiaFlight
