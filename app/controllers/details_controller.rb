@@ -121,7 +121,7 @@ def category_details
 			current_date =  Date.today.to_s(:db)
 			total_keywords = category_table_name.pluck(:keyword).uniq rescue []
 			total_keywords_count = total_keywords.count
-			start_date_total_keywords["unraked"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",0,"#{start_date}").pluck(:keyword).uniq.count 0
+			start_date_total_keywords["unranked"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",0,"#{start_date}").pluck(:keyword).uniq.count 0
 			start_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{start_date}").pluck(:keyword).uniq.count rescue 0
 			start_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{start_date}").pluck(:keyword).uniq.count rescue 0
 
