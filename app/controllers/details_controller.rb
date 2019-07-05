@@ -126,8 +126,8 @@ class DetailsController < ApplicationController
 			current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").count rescue 0
 			current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").count rescue 0
 			cat_obj["category_name"] = key
-			cat_obj["total_keywords"] = []
-			cat_obj["count"] = 1
+			cat_obj["total_keywords"] = total_keywords
+			cat_obj["count"] = total_keywords_count
 			cat_obj["start_date_kws"] = start_date_total_keywords
 			cat_obj["current_date_kws"] = current_date_total_keywords
 			categories_array.push(JSON.parse(cat_obj.to_json))
@@ -142,6 +142,8 @@ class DetailsController < ApplicationController
 			when "AE Q1 Hotels Keywords"
 				category_table_name = Aeq1HotelsKeyword
 			when "Emirates UAE Campaign"
+				category_table_name = EmiratesUaeCampaign
+			when "Emirates - UAE Campaign"
 				category_table_name = EmiratesUaeCampaign
 			when "India Flights"
 				category_table_name = IndiaFlight
