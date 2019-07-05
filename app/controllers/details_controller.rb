@@ -31,11 +31,11 @@ class DetailsController < ApplicationController
 			@category_name = params[:category_name].split("_").join(" ").titleize
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
-			category_exist = categories_keys.include?(@category_name)
+			category_exist = categories_keys.include?(@category_name.titleize)
 			column_headings = []
 			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage"}
 			if category_exist
-				table_name = get_table_name(@category_name)
+				table_name = get_table_name(@category_name.titleize)
 				keywords = table_name.all.pluck(:keyword).uniq
 				category_details_obj = []
 				start_date_ranks = {"mobile_rank"=> "","desktop_rank" => ""}
@@ -105,36 +105,37 @@ class DetailsController < ApplicationController
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
 			@categories = {"AE Q1 Hotels Keywords":{},"Emirates - UAE Campaign":{},"India Flights":{},"India Hotels":{},"KSA Q1 Arabic Keywords":{},"KSA Q1 Keywords":{},"UAE Q1 Activities":{},"UAE Q1 Keywords":{},"Visa":{}}
-			categories_list = []
-			cat_obj ={}
-			category_name = ""
-			start_date_total_keywords = {}
-			current_date_total_keywords = {}
+		categories_list = []
+		cat_obj ={}
+		category_name = ""
+		start_date_total_keywords = {}
+		current_date_total_keywords = {}
+		categories_keys.each_with_index do |key,index|
+			category_name = key
+			category_table_name = get_table_name(key)
+			start_date = "2019-07-02"
+			current_date =  Date.today.to_s(:db)
+			# total_keywords = category_table_name.all.map{|r| r.keyword}.uniq
+			# total_keywords_count = total_keywords.count
+			start_date_total_keywords["top_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{start_date}") rescue []
+			start_date_total_keywords["top_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{start_date}") rescue []
 
-			categories_keys.each_with_index do |key,index|
-				category_name = key
-				category_table_name = get_table_name(key)
-				start_date = "2019-07-02"
-				current_date =  Date.today.to_s(:db)
-				# total_keywords = category_table_name.all.map{|r| r.keyword}.uniq
-				# total_keywords_count = total_keywords.count
-				start_date_total_keywords["top_1"] = category_table_name.where("google_rank=? and Date(created_at)=?",1,"#{start_date}") rescue []
-				start_date_total_keywords["top_2_3"] = category_table_name.where("google_rank=? and Date(created_at)=?",2..3,"#{start_date}") rescue []
+			start_date_total_keywords["top_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{start_date}").count rescue []
+			start_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)" ,"#{start_date}").count rescue []
+			current_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{current_date}").count rescue []
+			current_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{current_date}").count rescue []
+			current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").count rescue []
+			current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").count rescue []
+			cat_obj["category_name"] = key
+			cat_obj["total_keywords"] = []
+			cat_obj["count"] = 1
+			cat_obj["start_date_kws"] = start_date_total_keywords
+			cat_obj["current_date_kws"] = current_date_total_keywords
+			categories_list.push(JSON.parse(cat_obj.to_json))
+			puts "#{index} is completed"
+ 			end
+ 			render json: categories_list
 
-				start_date_total_keywords["top_4_10"] = category_table_name.where("google_rank=? and Date(created_at)=?",4..10,"#{start_date}").count rescue []
-				start_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > ? and Date(created_at)",10 ,"#{start_date}").count rescue []
-				current_date_total_keywords["rank_1"] = category_table_name.where("google_rank=? and Date(created_at)=?",1,"#{current_date}").count rescue []
-				current_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank=? and Date(created_at)=?",2..3,"#{current_date}").count rescue []
-				current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank=? and Date(created_at)=?",4..10,"#{current_date}").count rescue []
-				current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > ? and Date(created_at)",10,"#{current_date}").count rescue []
-				cat_obj["category_name"] = key
-				cat_obj["total_keywords"] = []
-				cat_obj["count"] = 1
-				cat_obj["start_date_kws"] = start_date_total_keywords
-				cat_obj["current_date_kws"] = current_date_total_keywords
-				categories_list << cat_obj
-	 			end
-	 			render json:  categories_list
 		end
 
 		def get_table_name(key)
