@@ -32,7 +32,7 @@ class DetailsController < ApplicationController
 			render json: list
 		end
 
-		def category_details
+def category_details
 			@category_name = params[:category_name].split("_").join(" ").titleize
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
@@ -79,12 +79,12 @@ class DetailsController < ApplicationController
 					ranks_array << ranks_obj
 				end
 					if start_date_ranks["mobile_rank"] != 0 && start_date_ranks["desktop_rank"] != 0
-						mobile_rank_percentage = ((start_date_ranks["mobile_rank"] - current_date_ranks["mobile_rank"])/start_date_ranks["mobile_rank"])*100
-						desktop_rank_percentage = ((start_date_ranks["desktop_rank"] - current_date_ranks["desktop_rank"])/start_date_ranks["desktop_rank"])*100
+						mobile_rank_percentage = ((start_date_ranks["mobile_rank"].to_f - current_date_ranks["mobile_rank"].to_f)/start_date_ranks["mobile_rank"].to_f)*100
+						desktop_rank_percentage = ((start_date_ranks["desktop_rank"].to_f - current_date_ranks["desktop_rank"].to_f)/start_date_ranks["desktop_rank"].to_f)*100
 					end
 					percentage = {}
-					percentage["desktop_rank_percentage"] = desktop_rank_percentage rescue 0 
-					percentage["mobile_rank_percentage"] = mobile_rank_percentage rescue 0 
+					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
+					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
 					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage }
 
 					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
