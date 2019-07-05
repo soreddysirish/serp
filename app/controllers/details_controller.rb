@@ -9,21 +9,21 @@ class DetailsController < ApplicationController
 		categories_keys.each_with_index do |key,index|
 			table_name = get_table_name(key)
 			obj = {}
-			rank_one_keywords = table_name.where(google_rank: 1) rescue []
-			rank_one_keywords_count = rank_one_keywords.pluck(:keyword).uniq.count rescue 0
-			rank_in_between_two_and_three = table_name.where(google_rank: 2..3) rescue []
-			rank_in_between_two_and_three_count = @rank_in_between_two_and_three.pluck(:keyword).uniq.count
-			rank_in_between_four_and_ten = table_name.where(google_rank: 4..10) rescue []
-			rank_in_between_four_and_ten_count = @rank_in_between_four_and_ten.pluck(:keyword).uniq.count
-			rank_in_between_ten_and_twenty = table_name.where(google_rank: 10..20) rescue []
-			rank_in_between_ten_and_twenty_count = @rank_in_between_ten_and_twenty.pluck(:keyword).uniq.count
-			rank_above_twenty = table_name.where("google_rank > ?",20 ) rescue []
-			rank_above_twenty_count = @rank_above_twenty.pluck(:keyword).uniq.count
-			categories["#{key}"] = {"rank_one_keywords" => rank_one_keywords_count,
-				"rank_in_between_two_and_three" => rank_in_between_two_and_three_count,
-				"rank_in_between_four_and_ten"=>rank_in_between_four_and_ten_count,
-				"rank_in_between_ten_and_twenty"=>rank_in_between_ten_and_twenty_count,
-				"rank_above_twenty"=>rank_above_twenty_count}
+			@rank_one_keywords = table_name.where(google_rank: 1) rescue []
+			@rank_one_keywords_count = @rank_one_keywords.pluck(:keyword).uniq.count rescue 0
+			@rank_in_between_two_and_three = table_name.where(google_rank: 2..3) rescue []
+			@rank_in_between_two_and_three_count = @rank_in_between_two_and_three.pluck(:keyword).uniq.count rescue 0
+			@rank_in_between_four_and_ten = table_name.where(google_rank: 4..10) rescue []
+			@rank_in_between_four_and_ten_count = @rank_in_between_four_and_ten.pluck(:keyword).uniq.count rescue 0
+			@rank_in_between_ten_and_twenty = table_name.where(google_rank: 10..20) rescue []
+			@rank_in_between_ten_and_twenty_count = @rank_in_between_ten_and_twenty.pluck(:keyword).uniq.count rescue 0
+			@rank_above_twenty = table_name.where("google_rank > ?",20 ) rescue []
+			@rank_above_twenty_count = @rank_above_twenty.pluck(:keyword).uniq.count rescue 0
+			@categories["#{key}"] = {"rank_one_keywords" => @rank_one_keywords_count,
+				"rank_in_between_two_and_three" => @rank_in_between_two_and_three_count,
+				"rank_in_between_four_and_ten"=>@rank_in_between_four_and_ten_count,
+				"rank_in_between_ten_and_twenty"=>@rank_in_between_ten_and_twenty_count,
+				"rank_above_twenty"=>@rank_above_twenty_count}
 				categories_array << key
 			end
 			list = {}
@@ -121,15 +121,17 @@ class DetailsController < ApplicationController
 			current_date =  Date.today.to_s(:db)
 			total_keywords = category_table_name.pluck(:keyword).uniq rescue []
 			total_keywords_count = total_keywords.count
-			start_date_total_keywords["top_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{start_date}").count rescue 0
-			start_date_total_keywords["top_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{start_date}").count rescue 0
+			start_date_total_keywords["unraked"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",0,"#{start_date}").pluck(:keyword).uniq.count 0
+			start_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{start_date}").pluck(:keyword).uniq.count rescue 0
+			start_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{start_date}").pluck(:keyword).uniq.count rescue 0
 
-			start_date_total_keywords["top_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{start_date}").count rescue 0
-			start_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)" ,"#{start_date}").count rescue 0
-			current_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{current_date}").count rescue 0
-			current_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{current_date}").count rescue 0
-			current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").count rescue 0
-			current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").count rescue 0
+			start_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{start_date}").pluck(:keyword).uniq.count rescue 0
+			start_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)" ,"#{start_date}").pluck(:keyword).uniq.count rescue 0
+			current_date_total_keywords["unranked"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",0,"#{current_date}").pluck(:keyword).uniq.count rescue 0
+			current_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{current_date}").pluck(:keyword).uniq.count rescue 0
+			current_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{current_date}").pluck(:keyword).uniq.count rescue 0
+			current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").pluck(:keyword).uniq.count rescue 0
+			current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").pluck(:keyword).uniq.count rescue 0
 			cat_obj["category_name"] = key
 			cat_obj["total_keywords"] = total_keywords
 			cat_obj["count"] = total_keywords_count
