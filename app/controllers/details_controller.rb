@@ -31,11 +31,11 @@ class DetailsController < ApplicationController
 			@category_name = params[:category_name].split("_").join(" ")
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
-			category_exist = categories_keys.include?(@category_name)
+			category_exist = categories_keys.include?(@category_name.titleize)
 			column_headings = []
 			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage"}
 			if category_exist
-				table_name = get_table_name(@category_name)
+				table_name = get_table_name(@category_name.titleize)
 				keywords = table_name.all.pluck(:keyword).uniq
 				category_details_obj = []
 				start_date_ranks = {"mobile_rank"=> "","desktop_rank" => ""}
@@ -46,23 +46,33 @@ class DetailsController < ApplicationController
 				category_name = first_record.category_name
 				tag = first_record.tags
 				keyword = first_record.keyword
+				ranks_array = []
+				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},
+						
+	        	"current_date_ranks"=>{"desktop_rank"=> "","mobile_rank"=>""}
+	        }
 
+				start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
+				current_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				start_date_records.each do |sr|
 					if sr.search_type == "sem"
 						start_date_ranks["mobile_rank"] = sr.google_rank
 					else
 						start_date_ranks["desktop_rank"] = sr.google_rank
 					end
-
+					ranks_obj["start_date_ranks"] = start_date_ranks
+					ranks_array << ranks_obj
 				end
 					current_date_records = table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
 					current_date_records.each do |cr|
-						if cr.search_type == "sem"
-							current_date_ranks["mobile_rank"] = cr.google_rank	
-						else
-							current_date_ranks["desktop_rank"] = cr.google_rank
-						end
+					if cr.search_type == "sem"
+						current_date_ranks["mobile_rank"] = cr.google_rank
+					else
+						current_date_ranks["desktop_rank"] = cr.google_rank
 					end
+					ranks_obj["current_date_ranks"] = current_date_ranks
+					ranks_array << ranks_obj
+				end
 					if start_date_ranks["mobile_rank"] != 0 && start_date_ranks["desktop_rank"] != 0
 						mobile_rank_percentage = ((start_date_ranks["mobile_rank"] - current_date_ranks["mobile_rank"])/start_date_ranks["mobile_rank"])*100
 						desktop_rank_percentage = ((start_date_ranks["desktop_rank"] - current_date_ranks["desktop_rank"])/start_date_ranks["desktop_rank"])*100
@@ -88,7 +98,6 @@ class DetailsController < ApplicationController
 					end
 				end
 			end
-			binding.pry
 			render json: {category_details_obj:  category_details_obj,headings: column_headings}
 		end
 
@@ -126,7 +135,9 @@ class DetailsController < ApplicationController
 			puts "#{index} is completed"
  			end
  			render json: categories_list
+
 		end
+
 		def get_table_name(key)
 			case key
 			when "AE Q1 Hotels Keywords"
