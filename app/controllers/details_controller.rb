@@ -28,7 +28,7 @@ class DetailsController < ApplicationController
 		end
 
 		def category_details
-			@category_name = params[:category_name].split("_").join(" ")
+			@category_name = params[:category_name].split("_").join(" ").titleize
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name)
@@ -98,7 +98,6 @@ class DetailsController < ApplicationController
 					end
 				end
 			end
-			binding.pry
 			render json: {category_details_obj:  category_details_obj,headings: column_headings}
 		end
 
