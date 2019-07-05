@@ -9,21 +9,21 @@ class DetailsController < ApplicationController
 		categories_keys.each_with_index do |key,index|
 			table_name = get_table_name(key)
 			obj = {}
-			rank_one_keywords = table_name.where(google_rank: 1) rescue []
-			rank_one_keywords_count = rank_one_keywords.pluck(:keyword).uniq.count rescue 0
-			rank_in_between_two_and_three = table_name.where(google_rank: 2..3) rescue []
-			rank_in_between_two_and_three_count = rank_in_between_two_and_three.pluck(:keyword).uniq.count
-			rank_in_between_four_and_ten = table_name.where(google_rank: 4..10) rescue []
-			rank_in_between_four_and_ten_count = rank_in_between_four_and_ten.pluck(:keyword).uniq.count
-			rank_in_between_ten_and_twenty = table_name.where(google_rank: 10..20) rescue []
-			rank_in_between_ten_and_twenty_count = rank_in_between_ten_and_twenty.pluck(:keyword).uniq.count
-			rank_above_twenty = table_name.where("google_rank > ?",20 ) rescue []
-			rank_above_twenty_count = rank_above_twenty.pluck(:keyword).uniq.count
-			@categories["#{key}"] = {"rank_one_keywords" => rank_one_keywords_count,
-				"rank_in_between_two_and_three" => rank_in_between_two_and_three_count,
-				"rank_in_between_four_and_ten"=>rank_in_between_four_and_ten_count,
-				"rank_in_between_ten_and_twenty"=>rank_in_between_ten_and_twenty_count,
-				"rank_above_twenty"=>rank_above_twenty_count}
+			@rank_one_keywords = table_name.where(google_rank: 1) rescue []
+			@rank_one_keywords_count = @rank_one_keywords.pluck(:keyword).uniq.count rescue 0
+			@rank_in_between_two_and_three = table_name.where(google_rank: 2..3) rescue []
+			@rank_in_between_two_and_three_count = @rank_in_between_two_and_three.pluck(:keyword).uniq.count rescue 0
+			@rank_in_between_four_and_ten = table_name.where(google_rank: 4..10) rescue []
+			@rank_in_between_four_and_ten_count = @rank_in_between_four_and_ten.pluck(:keyword).uniq.count rescue 0
+			@rank_in_between_ten_and_twenty = table_name.where(google_rank: 10..20) rescue []
+			@rank_in_between_ten_and_twenty_count = @rank_in_between_ten_and_twenty.pluck(:keyword).uniq.count rescue 0
+			@rank_above_twenty = table_name.where("google_rank > ?",20 ) rescue []
+			@rank_above_twenty_count = @rank_above_twenty.pluck(:keyword).uniq.count rescue 0
+			@categories["#{key}"] = {"rank_one_keywords" => @rank_one_keywords_count,
+				"rank_in_between_two_and_three" => @rank_in_between_two_and_three_count,
+				"rank_in_between_four_and_ten"=>@rank_in_between_four_and_ten_count,
+				"rank_in_between_ten_and_twenty"=>@rank_in_between_ten_and_twenty_count,
+				"rank_above_twenty"=>@rank_above_twenty_count}
 				categories_array << key
 			end
 			list = {}
@@ -32,7 +32,7 @@ class DetailsController < ApplicationController
 			render json: list
 		end
 
-		def category_details
+def category_details
 			@category_name = params[:category_name].split("_").join(" ").titleize
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
@@ -79,12 +79,12 @@ class DetailsController < ApplicationController
 					ranks_array << ranks_obj
 				end
 					if start_date_ranks["mobile_rank"] != 0 && start_date_ranks["desktop_rank"] != 0
-						mobile_rank_percentage = ((start_date_ranks["mobile_rank"] - current_date_ranks["mobile_rank"])/start_date_ranks["mobile_rank"])*100
-						desktop_rank_percentage = ((start_date_ranks["desktop_rank"] - current_date_ranks["desktop_rank"])/start_date_ranks["desktop_rank"])*100
+						mobile_rank_percentage = ((start_date_ranks["mobile_rank"].to_f - current_date_ranks["mobile_rank"].to_f)/start_date_ranks["mobile_rank"].to_f)*100
+						desktop_rank_percentage = ((start_date_ranks["desktop_rank"].to_f - current_date_ranks["desktop_rank"].to_f)/start_date_ranks["desktop_rank"].to_f)*100
 					end
 					percentage = {}
-					percentage["desktop_rank_percentage"] = desktop_rank_percentage rescue 0 
-					percentage["mobile_rank_percentage"] = mobile_rank_percentage rescue 0 
+					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
+					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
 					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage }
 
 					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
@@ -121,12 +121,15 @@ class DetailsController < ApplicationController
 			current_date =  Date.today.to_s(:db)
 			total_keywords = category_table_name.pluck(:keyword).uniq rescue []
 			total_keywords_count = total_keywords.count
-			category_table_start_grouped = category_table_name.where("google_rank > 0 and Date(created_at)=?","#{start_date}").group(:google_rank).count
-			category_table_current_grouped = category_table_name.where("google_rank > 0 and Date(created_at)=?","#{current_date}").group(:google_rank).count
+			# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
+			category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+			category_table_current_grouped = category_table_name.select("DISTINCT keyword").where("Date(created_at)=?","#{current_date}").group(:google_rank).count
+			current_unranked = 0
 			current_top_1 = 0
 			current_top_2_3 = 0
 			current_top_4_10 = 0
 			current_above_10 = 0
+			start_unranked = 0
 			start_top_1 = 0
 			start_top_2_3 = 0
 			start_top_4_10 = 0
@@ -140,6 +143,8 @@ class DetailsController < ApplicationController
 					start_top_4_10 += value
 				elsif rank > 10
 					start_above_10 += value
+				else
+					start_unranked += value
 				end
 			end
 			category_table_current_grouped.each do|rank,value|
@@ -151,8 +156,12 @@ class DetailsController < ApplicationController
 					current_top_4_10 += value
 				elsif rank > 10
 					current_above_10 += value
+				else
+					current_unranked += value
 				end
 			end
+			start_date_total_keywords["unranked"] = start_unranked
+			current_date_total_keywords["unranked"] = current_unranked
 			start_date_total_keywords["top_1"] = start_top_1 rescue 0
 			start_date_total_keywords["top_2_3"] = start_top_2_3 rescue 0
 			start_date_total_keywords["top_4_10"] = start_top_4_10 rescue 0
