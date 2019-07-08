@@ -52,23 +52,25 @@ def category_details
 				search_volume = first_record.search_volume
 				kw_start_position = first_record.kw_start_position
 				language = first_record.language
-				region = first_record.language
-				
+				region = first_record.region 
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
-	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0}
+	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0,"types"=> {}}
 	        }
-
+	        types = {}
 				start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				current_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
 				start_date_records.each do |sr|
 					if sr.search_type == "sem"
 						start_date_ranks["mobile_rank"] = sr.google_rank rescue 0
+						types["mobile_type"] = sr.search_type
 					else 
 						start_date_ranks["desktop_rank"] = sr.google_rank rescue 0
+						types["desktop_type"] = sr.search_type
 					end
 					ranks_obj["start_date_ranks"] = start_date_ranks
+					ranks_obj["types"] = types
 					ranks_array << ranks_obj
 				end
 					current_date_records = table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
@@ -81,6 +83,8 @@ def category_details
 					cycle_changes["life_change"] = current_date_first_record.life_change
 					google_ranking_url = current_date_first_record.ranking_url
 					google_page = current_date_first_record.google_page rescue 0
+					bing_rank = current_date_first_record.bing_rank rescue 0
+					yahoo_rank = current_date_first_record.yahoo_rank rescue 0
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
 						current_date_ranks["mobile_rank"] = cr.google_rank
@@ -97,14 +101,14 @@ def category_details
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,google_page: google_page,"region" => region ,"language"=> language}
+					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 
 					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
 					# mobile_current_date_records = table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
 				end
 			
-				start_date = eval(table_name.group(:keyword).first.last_update)["date"]
-				current_date = Date.today.to_formatted_s(:long_ordinal)
+				# start_date = eval(table_name.group(:keyword).first.last_update)["date"]
+				# current_date = Date.today.to_formatted_s(:long_ordinal)
 				table_columns = table_name.column_names
 				table_columns.push("start_date","current_date")
 				heading_obj = {}
