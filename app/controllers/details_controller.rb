@@ -116,12 +116,13 @@ def category_details
 				table_columns = category_table_name.column_names
 				table_columns.push("start_date","current_date")
 				heading_obj = {}
-				table_columns.each do |tc|
-					if table_headings["#{tc}"].present?  
-					heading_obj = {"accessor" => "#{tc}","heading" => table_headings["#{tc}"]}
-					column_headings << heading_obj
-					end
-				end
+				#no need
+				# table_columns.each do |tc|
+				# 	if table_headings["#{tc}"].present?  
+				# 	heading_obj = {"accessor" => "#{tc}","heading" => table_headings["#{tc}"]}
+				# 	column_headings << heading_obj
+				# 	end
+				# end
 			end
 
 			render json: {category_details_obj:  category_details_obj,headings: column_headings}
