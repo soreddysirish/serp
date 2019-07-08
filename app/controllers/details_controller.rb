@@ -83,9 +83,10 @@ def category_details
 					cycle_changes["month_change"] = current_date_first_record.month_change
 					cycle_changes["life_change"] = current_date_first_record.life_change
 					google_ranking_url = current_date_first_record.ranking_url
-					google_page = current_date_first_record.google_page rescue 0
-					bing_rank = current_date_first_record.bing_rank rescue 0
-					yahoo_rank = current_date_first_record.yahoo_rank rescue 0
+					google_page = current_date_first_record.google_page rescue ""
+					google_rank = current_date_first_record.google_rank rescue ""
+					bing_rank = current_date_first_record.bing_rank rescue ""
+					yahoo_rank = current_date_first_record.yahoo_rank rescue  ""
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
 						current_date_ranks["mobile_rank"] = cr.google_rank
@@ -102,7 +103,7 @@ def category_details
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 
 					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
 					# mobile_current_date_records = table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
