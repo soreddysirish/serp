@@ -38,7 +38,7 @@ def category_details
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name.titleize)
 			column_headings = []
-			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage","search_volume"=> "Search Volume","kw_start_position" => "Keyword Start Position","google_rank_history" => "Google Rank History"}
+			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage","search_volume"=> "Search Volume","kw_start_position" => "Keyword Start Position","google_rank_history" => "Google Rank History","day_change" => "Day","week_change"=> "Week","month_change"=>"Month", "life_change" => "Life Change","region" => "Region","language"=>"Language"}
 			if category_exist
 				table_name = get_table_name(@category_name.titleize)
 				keywords = table_name.all.pluck(:keyword).uniq
@@ -46,11 +46,14 @@ def category_details
 				keywords.each do |kw|
 				start_date_records = table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				first_record  = start_date_records.first
-				category_name = first_record.category_name
+				category_name = first_record.category_name rescue ""
 				tag = first_record.tags
 				keyword = first_record.keyword
 				search_volume = first_record.search_volume
 				kw_start_position = first_record.kw_start_position
+				language = first_record.language
+				region = first_record.language
+				
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
 	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0}
@@ -61,16 +64,23 @@ def category_details
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
 				start_date_records.each do |sr|
 					if sr.search_type == "sem"
-						start_date_ranks["mobile_rank"] = sr.google_rank
+						start_date_ranks["mobile_rank"] = sr.google_rank rescue 0
 					else 
-						start_date_ranks["desktop_rank"] = sr.google_rank
+						start_date_ranks["desktop_rank"] = sr.google_rank rescue 0
 					end
 					ranks_obj["start_date_ranks"] = start_date_ranks
 					ranks_array << ranks_obj
 				end
 					current_date_records = table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
-					google_rank_history = eval(current_date_records.first.google_rank_history)
-
+					current_date_first_record = current_date_records.first
+					google_rank_history = eval(current_date_first_record.google_rank_history)
+					cycle_changes = {}
+					cycle_changes["day_change"] = current_date_first_record.day_change
+					cycle_changes["week_change"] = current_date_first_record.week_change
+					cycle_changes["month_change"] = current_date_first_record.month_change
+					cycle_changes["life_change"] = current_date_first_record.life_change
+					google_ranking_url = current_date_first_record.ranking_url
+					google_page = current_date_first_record.google_page rescue 0
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
 						current_date_ranks["mobile_rank"] = cr.google_rank
@@ -87,7 +97,7 @@ def category_details
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history }
+					category_details_obj << {"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,google_page: google_page,"region" => region ,"language"=> language}
 
 					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
 					# mobile_current_date_records = table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
@@ -121,7 +131,7 @@ def category_details
 			category_table_name = get_table_name(key)
 			start_date = "2019-07-02"
 			current_date =  Date.today.to_s(:db)
-			total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword).uniq rescue []
+			total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
 			total_keywords_count = total_keywords.count
 			# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
 			category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
