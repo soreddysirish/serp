@@ -36,6 +36,13 @@ gem 'httparty'
 # gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
+gem 'capistrano'
+gem 'capistrano-chruby'
+# cap tasks to manage puma application server
+gem 'capistrano-rails',   '~> 1.1'
+gem 'capistrano-bundler', '~> 1.1'
+gem 'capistrano-rvm'
+gem 'capistrano-passenger'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 group :development, :test do
