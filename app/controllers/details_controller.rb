@@ -33,27 +33,26 @@ class DetailsController < ApplicationController
 		end
 
 def category_details
-			@category_name = params[:category_name].split("_").join(" ").titleize
+			@category_name = params[:category_name].split("_").join(" ")
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
-			category_exist = categories_keys.include?(@category_name.titleize)
+			category_exist = categories_keys.include?(@category_name)
 			column_headings = []
 			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage","search_volume"=> "Search Volume","kw_start_position" => "Keyword Start Position","google_rank_history" => "Google Rank History","day_change" => "Day","week_change"=> "Week","month_change"=>"Month", "life_change" => "Life Change","region" => "Region","language"=>"Language"}
 			if category_exist
-				table_name = get_table_name(@category_name.titleize)
-				keywords = table_name.all.pluck(:keyword).uniq
+				category_table_name = get_table_name(@category_name)
+				keywords = category_table_name.all.pluck(:keyword).uniq
+
 				category_details_obj = []
 				keywords.each do |kw|
-				start_date_records = table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
+				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				first_record  = start_date_records.first
 				category_name = first_record.category_name rescue ""
 				tag = first_record.tags
 				keyword = first_record.keyword
 				search_volume = first_record.search_volume
 				kw_start_position = first_record.kw_start_position
-				language = first_record.language
-				region = first_record.region 
-				domain = first_record.url
+				
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
 	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0,"types"=> {}}
@@ -74,7 +73,7 @@ def category_details
 					ranks_obj["types"] = types
 					ranks_array << ranks_obj
 				end
-					current_date_records = table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
+					current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
 					current_date_first_record = current_date_records.first
 					google_rank_history = eval(current_date_first_record.google_rank_history)
 					cycle_changes = {}
@@ -87,6 +86,9 @@ def category_details
 					google_rank = current_date_first_record.google_rank rescue ""
 					bing_rank = current_date_first_record.bing_rank rescue ""
 					yahoo_rank = current_date_first_record.yahoo_rank rescue  ""
+					language = current_date_first_record.language
+					region = current_date_first_record.region 
+					domain = current_date_first_record.url
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
 						current_date_ranks["mobile_rank"] = cr.google_rank
@@ -105,13 +107,13 @@ def category_details
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
 					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 
-					# mobile_start_date_records = table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
-					# mobile_current_date_records = table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
+					# mobile_start_date_records = category_table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
+					# mobile_current_date_records = category_table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
 				end
-			
-				# start_date = eval(table_name.group(:keyword).first.last_update)["date"]
+				
+				# start_date = eval(category_table_name.group(:keyword).first.last_update)["date"]
 				# current_date = Date.today.to_formatted_s(:long_ordinal)
-				table_columns = table_name.column_names
+				table_columns = category_table_name.column_names
 				table_columns.push("start_date","current_date")
 				heading_obj = {}
 				table_columns.each do |tc|
@@ -121,6 +123,7 @@ def category_details
 					end
 				end
 			end
+
 			render json: {category_details_obj:  category_details_obj,headings: column_headings}
 		end
 
