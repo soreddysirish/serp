@@ -38,7 +38,7 @@ def category_details
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name.titleize)
 			column_headings = []
-			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage","search_volume"=> "Search Volume"}
+			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage","search_volume"=> "Search Volume","kw_start_position" => "Keyword Start Position","google_rank_history" => "Google Rank History"}
 			if category_exist
 				table_name = get_table_name(@category_name.titleize)
 				keywords = table_name.all.pluck(:keyword).uniq
