@@ -1,20 +1,27 @@
-# config valid for current version and patch releases of Capistrano
-lock "~> 3.11.0"
+# config valid only for current version of Capistrano
+
+# require "whenever/capistrano"
+
+lock "3.11.0"
 
 set :application, "serp"
-set :repo_url, "git@github.com:soreddysirish/serp.git"
-set :deploy_to, "/var/www/serp_backend"
-set :scm,:git
-set :branch,"master"
+set :repo_url, "git@github.com:Cleartrip-ltd/dynamic-flights.git"
+set :deploy_to, '/var/www/serp_backend'
+set :scm, :git
+set :branch, 'master'
 set :keep_releases, 5
 set :format, :pretty
 set :log_level, :debug
-set :pty, true 
+set :pty, true
+# set :rvm_map_bins, %w{rake gem bundle ruby rails}
 set :linked_dirs, %w{pids log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 set :stages, %w(staging production development)
 set :default_stage, "development"
 set :ssh_options, {:forward_agent => true}
 set :user,"ubuntu"
+# set :whenever_environment, fetch(:stage)
+# set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
+# Force rake through bundle exec
 SSHKit.config.command_map[:rake] = "bundle exec rake"
 
 # Force rails through bundle exec
@@ -58,6 +65,10 @@ namespace :deploy do
 
   # after :bundle, 'deploy:after_bundle'
 end
+# set :config_files,%w(
+# config/database.example.yml
+# 	)
+
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
@@ -75,7 +86,7 @@ end
 # set :pty, true
 
 # Default value for :linked_files is []
-# append :linked_files, "config/database.yml"
+# append :linked_files, "config/database.yml", "config/secrets.yml"
 
 # Default value for linked_dirs is []
 # append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"
@@ -88,6 +99,3 @@ end
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
-
-# Uncomment the following to require manually verifying the host key before first deploy.
-# set :ssh_options, verify_host_key: :secure
