@@ -230,5 +230,4 @@ def category_details
 				category_table_name = ""			
 			end
 		end
-		binding.pry
 	end
