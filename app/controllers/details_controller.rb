@@ -34,6 +34,7 @@ class DetailsController < ApplicationController
 
 def category_details
 			@category_name = params[:category_name].split("_").join(" ")
+			@category_name = "Emirates - UAE Campaign" if @category_name == "Emirates UAE Campaign"
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name)
@@ -99,8 +100,8 @@ def category_details
 					ranks_array << ranks_obj
 				end
 					if start_date_ranks["mobile_rank"] != 0 && start_date_ranks["desktop_rank"] != 0
-						mobile_rank_percentage = ((start_date_ranks["mobile_rank"].to_f - current_date_ranks["mobile_rank"].to_f)/start_date_ranks["mobile_rank"].to_f)*100
-						desktop_rank_percentage = ((start_date_ranks["desktop_rank"].to_f - current_date_ranks["desktop_rank"].to_f)/start_date_ranks["desktop_rank"].to_f)*100
+						mobile_rank_percentage = ((start_date_ranks["mobile_rank"].to_f - current_date_ranks["mobile_rank"].to_f)/start_date_ranks["mobile_rank"].to_f)*10
+						desktop_rank_percentage = ((start_date_ranks["desktop_rank"].to_f - current_date_ranks["desktop_rank"].to_f)/start_date_ranks["desktop_rank"].to_f)*10
 					end
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
@@ -229,4 +230,5 @@ def category_details
 				category_table_name = ""			
 			end
 		end
+		binding.pry
 	end
