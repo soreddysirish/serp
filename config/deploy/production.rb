@@ -60,7 +60,7 @@
 #     # password: "please use keys"
 #   }
 
-server '',
+server '13.229.141.6',
 user: 'ubuntu',
 roles: %w{app web app},
 ssh_options: {

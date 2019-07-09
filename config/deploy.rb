@@ -3,7 +3,7 @@ lock "~> 3.11.0"
 
 set :application, "serp"
 set :repo_url, "git@github.com:soreddysirish/serp.git"
-set :deploy_to, "/var/www/serp_backend/"
+set :deploy_to, "/var/www/serp_backend"
 set :scm,:git
 set :branch,"master"
 set :keep_releases, 5

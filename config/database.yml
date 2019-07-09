@@ -49,6 +49,7 @@ test:
 #
 production:
   <<: *default
-  database: serp_production
-  username: serp
-  password: <%= ENV['SERP_DATABASE_PASSWORD'] %>
+  database: ct_serp
+  host: 13.250.127.183
+  username: flights
+  password: ClearTripCalendar
