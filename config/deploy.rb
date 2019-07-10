@@ -5,7 +5,7 @@
 lock "3.11.0"
 
 set :application, "serp"
-set :repo_url, "git@github.com:Cleartrip-ltd/dynamic-flights.git"
+set :repo_url, "git@github.com:soreddysirish/serp.git"
 set :deploy_to, '/var/www/serp_backend'
 set :scm, :git
 set :branch, 'master'
