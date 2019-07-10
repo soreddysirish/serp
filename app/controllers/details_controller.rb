@@ -1,6 +1,7 @@
 class DetailsController < ApplicationController
 
 	def dashboard
+
 		categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
 		categories_keys = categories_list.keys
 		@categories = {"AE Q1 Hotels Keywords":{},"Emirates - UAE Campaign":{},"India Flights":{},"India Hotels":{},"KSA Q1 Arabic Keywords":{},"KSA Q1 Keywords":{},"UAE Q1 Activities":{},"UAE Q1 Keywords":{},"Visa":{}}
@@ -126,7 +127,7 @@ def category_details
 				# end
 			end
 
-			render json: {category_details_obj:  category_details_obj,headings: column_headings}
+			render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
 		end
 
 		def overall_categories_view
