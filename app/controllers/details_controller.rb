@@ -70,31 +70,31 @@ def category_details
 						start_date_ranks["desktop_rank"] = sr.google_rank rescue 0
 						types["desktop_type"] = sr.search_type
 					end
-					ranks_obj["start_date_ranks"] = start_date_ranks
+					ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
 					ranks_obj["types"] = types
 					ranks_array << ranks_obj
 				end
 					current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
 					current_date_first_record = current_date_records.first
-					google_rank_history = eval(current_date_first_record.google_rank_history)
+					google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
 					cycle_changes = {}
-					cycle_changes["day_change"] = current_date_first_record.day_change
-					cycle_changes["week_change"] = current_date_first_record.week_change
-					cycle_changes["month_change"] = current_date_first_record.month_change
-					cycle_changes["life_change"] = current_date_first_record.life_change
-					google_ranking_url = current_date_first_record.ranking_url
+					cycle_changes["day_change"] = current_date_first_record.day_change rescue ""
+					cycle_changes["week_change"] = current_date_first_record.week_change rescue ""
+					cycle_changes["month_change"] = current_date_first_record.month_change rescue ""
+					cycle_changes["life_change"] = current_date_first_record.life_change rescue ""
+					google_ranking_url = current_date_first_record.ranking_url rescue ""
 					google_page = current_date_first_record.google_page rescue ""
 					google_rank = current_date_first_record.google_rank rescue ""
 					bing_rank = current_date_first_record.bing_rank rescue ""
 					yahoo_rank = current_date_first_record.yahoo_rank rescue  ""
-					language = current_date_first_record.language
-					region = current_date_first_record.region 
-					domain = current_date_first_record.url
+					language = current_date_first_record.language rescue ""
+					region = current_date_first_record.region  rescue ""
+					domain = current_date_first_record.url rescue ""
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
-						current_date_ranks["mobile_rank"] = cr.google_rank
+						current_date_ranks["mobile_rank"] = cr.google_rank rescue 0
 					else
-						current_date_ranks["desktop_rank"] = cr.google_rank
+						current_date_ranks["desktop_rank"] = cr.google_rank rescue 0
 					end
 					ranks_obj["current_date_ranks"] = current_date_ranks
 					ranks_array << ranks_obj
