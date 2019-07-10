@@ -49,12 +49,7 @@ def category_details
 				keywords.each do |kw|
 				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				first_record  = start_date_records.first
-				category_name = first_record.category_name rescue ""
-				tag = first_record.tags rescue ""
-				keyword = first_record.keyword rescue ""
-				search_volume = first_record.search_volume rescue ""
 				kw_start_position = first_record.kw_start_position rescue ""
-				
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
 	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0,"types"=> {}}
@@ -91,6 +86,10 @@ def category_details
 					language = current_date_first_record.language rescue ""
 					region = current_date_first_record.region  rescue ""
 					domain = current_date_first_record.url rescue ""
+					category_name = current_date_first_record.category_name rescue ""
+					tag = current_date_first_record.tags rescue ""
+					keyword = current_date_first_record.keyword rescue ""
+					search_volume = current_date_first_record.search_volume rescue ""
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
 						current_date_ranks["mobile_rank"] = cr.google_rank rescue 0
