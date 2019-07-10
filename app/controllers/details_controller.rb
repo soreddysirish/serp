@@ -49,10 +49,10 @@ def category_details
 				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				first_record  = start_date_records.first
 				category_name = first_record.category_name rescue ""
-				tag = first_record.tags
-				keyword = first_record.keyword
-				search_volume = first_record.search_volume
-				kw_start_position = first_record.kw_start_position
+				tag = first_record.tags rescue ""
+				keyword = first_record.keyword rescue ""
+				search_volume = first_record.search_volume rescue ""
+				kw_start_position = first_record.kw_start_position rescue ""
 				
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
