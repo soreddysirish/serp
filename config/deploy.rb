@@ -19,8 +19,8 @@ set :stages, %w(staging production development)
 set :default_stage, "development"
 set :ssh_options, {:forward_agent => true}
 set :user,"ubuntu"
-# set :whenever_environment, fetch(:stage)
-# set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
+set :whenever_environment, fetch(:stage)
+set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
 # Force rake through bundle exec
 SSHKit.config.command_map[:rake] = "bundle exec rake"
 
