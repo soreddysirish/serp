@@ -59,9 +59,18 @@ namespace :deploy do
       end
     end
   end
-  after :finishing, 'deploy:restart'
-  after :finishing, 'deploy:cleanup'
-  after :updated, 'deploy:precompile'
+  desc 'update crontab with whenever'
+  task :update_cron do 
+   on roles(:app) do
+    within current_path do
+      execute :bundle, :exec, "whenever --update-crontab #{fetch(:application)}"
+    end
+  end
+end
+after :finishing, 'deploy:restart'
+after :finishing, 'deploy:cleanup'
+after :finishing, 'deploy:update_cron'
+after :updated, 'deploy:precompile'
 
   # after :bundle, 'deploy:after_bundle'
 end
