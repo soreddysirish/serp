@@ -1,7 +1,9 @@
 namespace :serp  do
 	task get_categories: :environment do 
 
-		category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
+		# => develpment category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600") 
+		#=> production 
+		category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 		category_keys = category_list.keys
 		category_keys.each_with_index do |model,index|
 			case model
@@ -23,6 +25,24 @@ namespace :serp  do
 				table_name=Uaeq1Keyword
 			when "Visa"
 				table_name = Visa
+			when "Flight India - Q2"
+					table_name = FlightIndiaQ2
+			when "KSA Arabic Q2"
+				table_name = KsaArabicQ2
+			when "KSA English Q2 Airlines"
+				table_name = KsaEnglishQ2Airline
+			when "KSA English Q2 Booking"
+				table_name = KsaEnglishQ2Booking
+			when "KSA English Q2 Generic"
+				table_name = KsaEnglishQ2Generic
+			when "KSA English Q2 Offers"
+				table_name = KsaEnglishQ2Offer
+			when "UAE Q2 Airlines"
+				table_name = UaeQ2Airline
+			when "UAE Q2 Booking"
+				table_name = UaeQ2Booking
+			when "UAE Q2 Generic"
+				table_name = UaeQ2Generic	
 			else
 				table_name = ""			
 			end
