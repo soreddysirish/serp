@@ -53,7 +53,7 @@ def category_details
 				# kw_start_position = first_record.kw_start_position rescue ""
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
-	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0,"types"=> {}}
+	        	"current_date_ranks"=>{"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => 0,"mobile_target_position" => 0,"types"=> {}}
 	        }
 	        types = {}
 				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
@@ -97,10 +97,12 @@ def category_details
 						current_date_ranks["mobile_rank"] = cr.google_rank rescue 0
 						current_date_ranks["moblie_intial_position"] = cr.kw_start_position
 						current_date_ranks["mobile_target_position"] = cr.target_position rescue ""
+						types["mobile_type"] = cr.search_type
 					else
 						current_date_ranks["desktop_rank"] = cr.google_rank rescue 0
 						current_date_ranks["desktop_intial_position"] = cr.kw_start_position
 						current_date_ranks["desktop_target_position"] = cr.target_position rescue ""
+						types["desktop_type"] = cr.search_type
 					end
 					ranks_obj["current_date_ranks"] = current_date_ranks
 					ranks_array << ranks_obj
@@ -112,7 +114,7 @@ def category_details
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>"","current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 
 					# mobile_start_date_records = category_table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
 					# mobile_current_date_records = category_table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
