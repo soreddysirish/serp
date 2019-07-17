@@ -75,14 +75,48 @@ namespace :serp  do
 	end
  	
  		task :update_KsaEnglishQ2Airline_category_table => :environment do 
-		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
+		CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'se')
 			mobile_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'sem')
 			desktop_target_position = row[4].to_i
 			mobile_target_position = row[7].to_i
+			if desktop_records.any? || mobile_records.any? 
 			desktop_records.update_all(target_position: desktop_target_position)
 			mobile_records.update_all(target_position: mobile_target_position)
 			puts "#{index+1} - update for keyword #{row[0]} - done"
+			end
+		end
+		puts "@@@  updation done!!"
+	end
+
+
+	task :update_FlightIndiaQ2_category_table => :environment do 
+		CSV.foreach("public/csv_files/FlightIndiaQ2.csv", :headers=>true).each_with_index do |row,index|
+			desktop_records = FlightIndiaQ2.where(keyword: row[0],search_type: 'se')
+			mobile_records = FlightIndiaQ2.where(keyword: row[0],search_type: 'sem')
+			desktop_target_position = row[4].to_i
+			mobile_target_position = row[5].to_i
+			if desktop_records.any? || mobile_records.any? 
+			desktop_records.update_all(target_position: desktop_target_position)
+			mobile_records.update_all(target_position: mobile_target_position)
+			puts "#{index+1} - update for keyword #{row[0]} - done"
+			end
+		end
+		puts "@@@  updation done!!"
+	end
+
+
+		task :update_KsaArabicQ2_category_table => :environment do 
+		CSV.foreach("public/csv_files/KsaArabicQ2.csv", :headers=>true).each_with_index do |row,index|
+			desktop_records = KsaArabicQ2.where(keyword: row[0],search_type: 'se')
+			mobile_records = KsaArabicQ2.where(keyword: row[0],search_type: 'sem')
+			desktop_target_position = row[5].to_i
+			mobile_target_position = row[8].to_i
+			if desktop_records.any? || mobile_records.any? 
+			desktop_records.update_all(target_position: desktop_target_position)
+			mobile_records.update_all(target_position: mobile_target_position)
+			puts "#{index+1} - update for keyword #{row[0]} - done"
+			end
 		end
 		puts "@@@  updation done!!"
 	end

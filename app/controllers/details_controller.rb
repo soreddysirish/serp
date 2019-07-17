@@ -36,7 +36,11 @@ class DetailsController < ApplicationController
 
 def category_details
 			@category_name = params[:category_name].split("_").join(" ")
-			@category_name = "Emirates - UAE Campaign" if @category_name == "Emirates UAE Campaign"
+			if @category_name == "Emirates UAE Campaign" 
+				@category_name = "Emirates - UAE Campaign" 
+			else
+				@category_name  = "Flight India - Q2"
+			end
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name)
