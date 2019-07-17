@@ -2,7 +2,8 @@ class DetailsController < ApplicationController
 
 	def dashboard
 
-		categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
+		# categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600") - old key
+		categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 		categories_keys = categories_list.keys
 		@categories = {"AE Q1 Hotels Keywords":{},"Emirates - UAE Campaign":{},"India Flights":{},"India Hotels":{},"KSA Q1 Arabic Keywords":{},"KSA Q1 Keywords":{},"UAE Q1 Activities":{},"UAE Q1 Keywords":{},"Visa":{}}
 		categories_array = []
@@ -36,7 +37,7 @@ class DetailsController < ApplicationController
 def category_details
 			@category_name = params[:category_name].split("_").join(" ")
 			@category_name = "Emirates - UAE Campaign" if @category_name == "Emirates UAE Campaign"
-			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
+			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 			categories_keys = categories_list.keys
 			category_exist = categories_keys.include?(@category_name)
 			column_headings = []
@@ -48,7 +49,7 @@ def category_details
 				category_details_obj = []
 				keywords.each do |kw|
 				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
-				first_record  = start_date_records.first
+				first_record  = start_date_records.first rescue ""
 				kw_start_position = first_record.kw_start_position rescue ""
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
@@ -125,12 +126,12 @@ def category_details
 				# 	end
 				# end
 			end
-
+			binding.pry
 			render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
 		end
 
 		def overall_categories_view
-			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600")
+			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 			categories_keys = categories_list.keys
 			categories_array = []
 			cat_obj ={}
@@ -226,6 +227,24 @@ def category_details
 				category_table_name= Uaeq1Keyword
 			when "Visa"
 				category_table_name = Visa
+			when "Flight India - Q2"
+				category_table_name = FlightIndiaQ2
+			when "KSA Arabic Q2"
+				category_table_name = KsaArabicQ2
+			when "KSA English Q2 Airlines"
+				category_table_name = KsaEnglishQ2Airline
+			when "KSA English Q2 Booking"
+				category_table_name = KsaEnglishQ2Booking
+			when "KSA English Q2 Generic"
+				category_table_name = KsaEnglishQ2Generic
+			when "KSA English Q2 Offers"
+				category_table_name = KsaEnglishQ2Offer
+			when "UAE Q2 Airlines"
+				category_table_name = UaeQ2Airline
+			when "UAE Q2 Booking"
+				category_table_name = UaeQ2Booking
+			when "UAE Q2 Generic"
+				category_table_name = UaeQ2Generic	
 			else
 				category_table_name = ""			
 			end
