@@ -57,6 +57,11 @@ namespace :serp  do
 						p "**** #{table_name} data saved" 
 					end
 				end
+				Rake::Task["serp:update_IndiaHotel_category_table"].invoke
+				Rake::Task["serp:update_UaeQ2Airline_category_table"].invoke
+				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].invoke
+				Rake::Task["serp:update_FlightIndiaQ2_category_table"].invoke
+				Rake::Task["serp:update_KsaArabicQ2_category_table"].invoke
 			end
 		end	
 	end
