@@ -60,7 +60,18 @@ namespace :serp  do
 			end
 		end	
 	end
-
+	task :update_IndiaHotel_category_table => :environment do 
+		CSV.foreach("public/csv_files/IndiaHotel.csv", :headers=>true).each_with_index do |row,index|
+			desktop_records = IndiaHotel.where(keyword: row[0],search_type: 'se',quater_period: 2)
+			mobile_records = IndiaHotel.where(keyword: row[0],search_type: 'sem',quater_period: 2)
+			desktop_target_position = row[5].to_i
+			mobile_target_position = row[9].to_i
+			desktop_records.update_all(target_position: desktop_target_position)
+			mobile_records.update_all(target_position: mobile_target_position)
+			puts "#{index+1} - update for keyword #{row[0]} - done"
+		end
+		puts "@@@  updation done!!"
+	end
 	task :update_UaeQ2Airline_category_table => :environment do 
 		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = UaeQ2Airline.where(keyword: row[0],search_type: 'se')
