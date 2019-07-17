@@ -61,10 +61,31 @@ namespace :serp  do
 		end	
 	end
 
-	task :import_csv => :environment do 
-		
+	task :update_UaeQ2Airline_category_table => :environment do 
+		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
+			desktop_records = UaeQ2Airline.where(keyword: row[0],search_type: 'se')
+			mobile_records = UaeQ2Airline.where(keyword: row[0],search_type: 'sem')
+			desktop_target_position = row[5].to_i
+			mobile_target_position = row[9].to_i
+			desktop_records.update_all(target_position: desktop_target_position)
+			mobile_records.update_all(target_position: mobile_target_position)
+			puts "#{index+1} - update for keyword #{row[0]} - done"
+		end
+		puts "@@@  updation done!!"
 	end
- 
+ 	
+ 		task :update_KsaEnglishQ2Airline_category_table => :environment do 
+		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
+			desktop_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'se')
+			mobile_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'sem')
+			desktop_target_position = row[4].to_i
+			mobile_target_position = row[7].to_i
+			desktop_records.update_all(target_position: desktop_target_position)
+			mobile_records.update_all(target_position: mobile_target_position)
+			puts "#{index+1} - update for keyword #{row[0]} - done"
+		end
+		puts "@@@  updation done!!"
+	end
 
 end
 

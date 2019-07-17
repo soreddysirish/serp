@@ -48,29 +48,29 @@ def category_details
 
 				category_details_obj = []
 				keywords.each do |kw|
-				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
-				first_record  = start_date_records.first rescue ""
-				kw_start_position = first_record.kw_start_position rescue ""
+				# start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
+				# first_record  = start_date_records.first rescue ""
+				# kw_start_position = first_record.kw_start_position rescue ""
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
 	        	"current_date_ranks"=>{"desktop_rank"=> 0,"mobile_rank"=>0,"types"=> {}}
 	        }
 	        types = {}
-				start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
-				current_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
+				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
+				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => 0,"mobile_target_position" => 0}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
-				start_date_records.each do |sr|
-					if sr.search_type == "sem"
-						start_date_ranks["mobile_rank"] = sr.google_rank rescue 0
-						types["mobile_type"] = sr.search_type
-					else 
-						start_date_ranks["desktop_rank"] = sr.google_rank rescue 0
-						types["desktop_type"] = sr.search_type
-					end
-					ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
-					ranks_obj["types"] = types
-					ranks_array << ranks_obj
-				end
+				# start_date_records.each do |sr|
+				# 	if sr.search_type == "sem"
+				# 		start_date_ranks["mobile_rank"] = sr.kw_start_position rescue 0
+				# 		types["mobile_type"] = sr.search_type
+				# 	else 
+				# 		start_date_ranks["desktop_rank"] = sr.kw_start_position rescue 0
+				# 		types["desktop_type"] = sr.search_type
+				# 	end
+				# 	ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
+				# 	ranks_obj["types"] = types
+				# 	ranks_array << ranks_obj
+				# end
 					current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
 					current_date_first_record = current_date_records.first
 					google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
@@ -91,18 +91,23 @@ def category_details
 					tag = current_date_first_record.tags rescue ""
 					keyword = current_date_first_record.keyword rescue ""
 					search_volume = current_date_first_record.search_volume rescue ""
+					kw_start_position = current_date_first_record.kw_start_position rescue ""
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
 						current_date_ranks["mobile_rank"] = cr.google_rank rescue 0
+						current_date_ranks["moblie_intial_position"] = cr.kw_start_position
+						current_date_ranks["mobile_target_position"] = cr.target_position rescue ""
 					else
 						current_date_ranks["desktop_rank"] = cr.google_rank rescue 0
+						current_date_ranks["desktop_intial_position"] = cr.kw_start_position
+						current_date_ranks["desktop_target_position"] = cr.target_position rescue ""
 					end
 					ranks_obj["current_date_ranks"] = current_date_ranks
 					ranks_array << ranks_obj
 				end
-					if start_date_ranks["mobile_rank"] != 0 && start_date_ranks["desktop_rank"] != 0
-						mobile_rank_percentage = ((start_date_ranks["mobile_rank"].to_f - current_date_ranks["mobile_rank"].to_f)/start_date_ranks["mobile_rank"].to_f)*10
-						desktop_rank_percentage = ((start_date_ranks["desktop_rank"].to_f - current_date_ranks["desktop_rank"].to_f)/start_date_ranks["desktop_rank"].to_f)*10
+					if current_date_ranks["mobile_target_position"] != 0 && current_date_ranks["desktop_target_position"] != 0
+						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*10
+						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*10
 					end
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
@@ -126,7 +131,6 @@ def category_details
 				# 	end
 				# end
 			end
-			binding.pry
 			render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
 		end
 
