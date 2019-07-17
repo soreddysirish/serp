@@ -98,23 +98,28 @@ def category_details
 					kw_start_position = current_date_first_record.kw_start_position rescue ""
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
-						current_date_ranks["mobile_rank"] = cr.google_rank rescue 0
-						current_date_ranks["moblie_intial_position"] = cr.kw_start_position
-						current_date_ranks["mobile_target_position"] = cr.target_position rescue ""
+						current_date_ranks["mobile_rank"] = cr.google_rank rescue ""
+						current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue ""
+						current_date_ranks["mobile_target_position"] = cr.target_position rescue "N/A"
 						types["mobile_type"] = cr.search_type
 					else
-						current_date_ranks["desktop_rank"] = cr.google_rank rescue 0
-						current_date_ranks["desktop_intial_position"] = cr.kw_start_position
-						current_date_ranks["desktop_target_position"] = cr.target_position rescue ""
+						current_date_ranks["desktop_rank"] = cr.google_rank rescue ""
+						current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue ""
+						current_date_ranks["desktop_target_position"] = cr.target_position rescue "N/A"
 						types["desktop_type"] = cr.search_type
 					end
 					ranks_obj["current_date_ranks"] = current_date_ranks
 					ranks_array << ranks_obj
 				end
-					if current_date_ranks["mobile_target_position"] != 0 && current_date_ranks["desktop_target_position"] != 0
-						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*10
-						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*10
+
+					if current_date_ranks["mobile_target_position"].to_i != 0 && current_date_ranks["desktop_target_position"].to_i != 0
+						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*100
+						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*100
+					else
+						mobile_rank_percentage = ((current_date_ranks["moblie_intial_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["moblie_intial_position"].to_f)*100
+						desktop_rank_percentage = ((current_date_ranks["desktop_intial_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_intial_position"].to_f)*100
 					end
+					
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
