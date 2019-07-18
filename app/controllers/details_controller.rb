@@ -61,7 +61,7 @@ def category_details
 	        }
 	        types = {}
 				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
-				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => 0,"mobile_target_position" => 0}
+				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
 				# start_date_records.each do |sr|
 				# 	if sr.search_type == "sem"
@@ -98,13 +98,13 @@ def category_details
 					kw_start_position = current_date_first_record.kw_start_position rescue ""
 					current_date_records.each do |cr|
 					if cr.search_type == "sem"
-						current_date_ranks["mobile_rank"] = cr.google_rank rescue ""
-						current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue ""
+						current_date_ranks["mobile_rank"] = cr.google_rank rescue "N/A"
+						current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue "N/A"
 						current_date_ranks["mobile_target_position"] = cr.target_position rescue "N/A"
 						types["mobile_type"] = cr.search_type
 					else
-						current_date_ranks["desktop_rank"] = cr.google_rank rescue ""
-						current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue ""
+						current_date_ranks["desktop_rank"] = cr.google_rank rescue "N/A"
+						current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue "N/A"
 						current_date_ranks["desktop_target_position"] = cr.target_position rescue "N/A"
 						types["desktop_type"] = cr.search_type
 					end
@@ -153,6 +153,7 @@ def category_details
 			category_name = ""
 			start_date_total_keywords = {}
 			current_date_total_keywords = {}
+			target_total_keywords ={}
 			categories_keys.each_with_index do |key,index|
 			category_name = key
 			category_table_name = get_table_name(key)
@@ -161,8 +162,15 @@ def category_details
 			total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
 			total_keywords_count = total_keywords.count
 			# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
-			category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+			# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
 			category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count
+			category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+			unless category_table_start_grouped.present?  
+				start_date = "2019-07-18"
+				category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+			end
+
+			current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
 			current_unranked = 0
 			current_top_1 = 0
 			current_top_2_3 = 0
@@ -173,6 +181,11 @@ def category_details
 			start_top_2_3 = 0
 			start_top_4_10 = 0
 			start_above_10 = 0
+			target_top_1 = 0
+			target_top_2_3 = 0
+			target_top_4_10 = 0
+			target_above_10 = 0
+			target_unranked = 0
 			category_table_start_grouped.each do|rank,value|
 				if rank==1
 					start_top_1 += value
@@ -189,14 +202,19 @@ def category_details
 			category_table_current_grouped.each do|rank,value|
 				if rank==1
 					current_top_1 += value
+					target_top_1 += 1
 				elsif rank==2 || rank==3
 					current_top_2_3 += value
+					target_top_2_3 += 1
 				elsif rank > 3 && rank < 11
 					current_top_4_10 += value
+					target_top_4_10 += 1
 				elsif rank > 10
 					current_above_10 += value
+					target_above_10 +=  1
 				else
 					current_unranked += value
+					target_unranked += 1
 				end
 			end
 			start_date_total_keywords["unranked"] = start_unranked
@@ -209,11 +227,18 @@ def category_details
 			current_date_total_keywords["rank_2_3"] = current_top_2_3 rescue 0
 			current_date_total_keywords["rank_4_10"] = current_top_4_10 rescue 0
 			current_date_total_keywords["rank_above_10"] = current_above_10 rescue 0
+			target_total_keywords["target_unranked"] = target_unranked rescue 0
+			target_total_keywords["target_top_4_10"] = target_top_4_10 rescue 0
+			target_total_keywords["target_above_10"] = target_above_10 rescue 0
+			target_total_keywords["target_top_2_3"] = target_top_2_3 rescue 0
+			target_total_keywords["target_top_1"] = target_top_1 rescue 0
+
 			cat_obj["category_name"] = key
 			cat_obj["total_keywords"] = total_keywords
 			cat_obj["count"] = total_keywords_count
 			cat_obj["start_date_kws"] = start_date_total_keywords
 			cat_obj["current_date_kws"] = current_date_total_keywords
+			cat_obj["target_kws"] = target_total_keywords
 			categories_array.push(JSON.parse(cat_obj.to_json))
 			puts "#{index} is completed"
  			end
