@@ -155,92 +155,109 @@ def category_details
 			current_date_total_keywords = {}
 			target_total_keywords ={}
 			categories_keys.each_with_index do |key,index|
-			category_name = key
-			category_table_name = get_table_name(key)
-			start_date = "2019-07-02"
-			current_date =  Date.today.to_s(:db)
-			total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
-			total_keywords_count = total_keywords.count
-			# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
-			# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
-			category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count
-			category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
-			unless category_table_start_grouped.present?  
-				start_date = "2019-07-18"
-				category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
-			end
+				category_name = key
+				category_table_name = get_table_name(key)
+				if category_table_name.present? && category_table_name != ""
+					start_date = "2019-07-02"
+					current_date =  Date.today.to_s(:db)
+					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
+					total_keywords_count = total_keywords.count
+					# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
+					# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
+					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
+					target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
+					unless category_table_start_grouped.present?  
+						start_date = "2019-07-18"
+						category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+					end
 
-			current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
-			current_unranked = 0
-			current_top_1 = 0
-			current_top_2_3 = 0
-			current_top_4_10 = 0
-			current_above_10 = 0
-			start_unranked = 0
-			start_top_1 = 0
-			start_top_2_3 = 0
-			start_top_4_10 = 0
-			start_above_10 = 0
-			target_top_1 = 0
-			target_top_2_3 = 0
-			target_top_4_10 = 0
-			target_above_10 = 0
-			target_unranked = 0
-			category_table_start_grouped.each do|rank,value|
-				if rank==1
-					start_top_1 += value
-				elsif rank==2 || rank==3
-					start_top_2_3 += value
-				elsif rank > 3 && rank < 11
-					start_top_4_10 += value
-				elsif rank > 10
-					start_above_10 += value
-				else
-					start_unranked += value
+					current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
+					current_unranked = 0
+					current_top_1 = 0
+					current_top_2_3 = 0
+					current_top_4_10 = 0
+					current_above_10 = 0
+					start_unranked = 0
+					start_top_1 = 0
+					start_top_2_3 = 0
+					start_top_4_10 = 0
+					start_above_10 = 0
+					target_top_1 = 0
+					target_top_2_3 = 0
+					target_top_4_10 = 0
+					target_above_10 = 0
+					target_unranked = 0
+					if category_table_current_grouped.present?
+						category_table_start_grouped.each do|rank,value|
+							if rank==1
+								start_top_1 += value
+							elsif rank==2 || rank==3
+								start_top_2_3 += value
+							elsif rank > 3 && rank < 11
+								start_top_4_10 += value
+							elsif rank > 10
+								start_above_10 += value
+							else
+								start_unranked += value
+							end
+						end
+					end
+					if category_table_current_grouped.present?
+						category_table_current_grouped.each do|rank,value|
+							if rank==1
+								current_top_1 += value
+							elsif rank==2 || rank==3
+								current_top_2_3 += value
+							elsif rank > 3 && rank < 11
+								current_top_4_10 += value
+							elsif rank > 10
+								current_above_10 += value
+							else
+								current_unranked += value
+							end
+						end
+					end
+				if target_grouped.present?
+					target_grouped.each do |rank,value|
+						rank = rank.nil? ? 0 : rank 
+						if rank==1
+							target_top_1 += value
+						elsif rank==2 || rank==3
+							target_top_2_3 += value
+						elsif rank > 3 && rank < 11
+							target_top_4_10 += value
+						elsif rank > 10
+							target_above_10 +=  value
+						else
+							target_unranked += value
+						end
+					end
 				end
-			end
-			category_table_current_grouped.each do|rank,value|
-				if rank==1
-					current_top_1 += value
-					target_top_1 += 1
-				elsif rank==2 || rank==3
-					current_top_2_3 += value
-					target_top_2_3 += 1
-				elsif rank > 3 && rank < 11
-					current_top_4_10 += value
-					target_top_4_10 += 1
-				elsif rank > 10
-					current_above_10 += value
-					target_above_10 +=  1
-				else
-					current_unranked += value
-					target_unranked += 1
+					start_date_total_keywords["unranked"] = start_unranked
+					current_date_total_keywords["unranked"] = current_unranked
+					start_date_total_keywords["rank_1"] = start_top_1 rescue 0
+					start_date_total_keywords["rank_2_3"] = start_top_2_3 rescue 0
+					start_date_total_keywords["rank_4_10"] = start_top_4_10 rescue 0
+					start_date_total_keywords["rank_above_10"] = start_above_10 rescue 0
+					current_date_total_keywords["rank_1"] = current_top_1 rescue 0
+					current_date_total_keywords["rank_2_3"] = current_top_2_3 rescue 0
+					current_date_total_keywords["rank_4_10"] = current_top_4_10 rescue 0
+					current_date_total_keywords["rank_above_10"] = current_above_10 rescue 0
+					target_total_keywords["target_unranked"] = target_unranked rescue 0
+					target_total_keywords["target_top_4_10"] = target_top_4_10 rescue 0
+					target_total_keywords["target_above_10"] = target_above_10 rescue 0
+					target_total_keywords["target_top_2_3"] = target_top_2_3 rescue 0
+					target_total_keywords["target_top_1"] = target_top_1 rescue 0
+					cat_obj["category_name"] = key
+					cat_obj["total_keywords"] = total_keywords
+					cat_obj["count"] = total_keywords_count
+					cat_obj["start_date_kws"] = start_date_total_keywords
+					cat_obj["current_date_kws"] = current_date_total_keywords
+					cat_obj["target_kws"] = target_total_keywords
+					categories_array.push(JSON.parse(cat_obj.to_json))
+					puts "#{index} is completed"
 				end
-			end
-			start_date_total_keywords["unranked"] = start_unranked
-			current_date_total_keywords["unranked"] = current_unranked
-			start_date_total_keywords["rank_1"] = start_top_1 rescue 0
-			start_date_total_keywords["rank_2_3"] = start_top_2_3 rescue 0
-			start_date_total_keywords["rank_4_10"] = start_top_4_10 rescue 0
-			start_date_total_keywords["rank_above_10"] = start_above_10 rescue 0
-			current_date_total_keywords["rank_1"] = current_top_1 rescue 0
-			current_date_total_keywords["rank_2_3"] = current_top_2_3 rescue 0
-			current_date_total_keywords["rank_4_10"] = current_top_4_10 rescue 0
-			current_date_total_keywords["rank_above_10"] = current_above_10 rescue 0
-			target_total_keywords["target_unranked"] = target_unranked rescue 0
-			target_total_keywords["target_top_4_10"] = target_top_4_10 rescue 0
-			target_total_keywords["target_above_10"] = target_above_10 rescue 0
-			target_total_keywords["target_top_2_3"] = target_top_2_3 rescue 0
-			target_total_keywords["target_top_1"] = target_top_1 rescue 0
-
-			cat_obj["category_name"] = key
-			cat_obj["total_keywords"] = total_keywords
-			cat_obj["count"] = total_keywords_count
-			cat_obj["start_date_kws"] = start_date_total_keywords
-			cat_obj["current_date_kws"] = current_date_total_keywords
-			cat_obj["target_kws"] = target_total_keywords
-			categories_array.push(JSON.parse(cat_obj.to_json))
-			puts "#{index} is completed"
  			end
  			render json: categories_array
 		end
