@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_16_080904) do
+ActiveRecord::Schema.define(version: 2019_07_18_074217) do
 
   create_table "aeq1_hotels_keywords", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "category_name"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history"
@@ -55,6 +56,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history"
@@ -121,6 +123,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history"
@@ -153,6 +156,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history"
@@ -355,6 +359,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history", limit: 16777215
@@ -387,6 +392,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history", limit: 16777215
@@ -413,7 +419,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "uae_q2_airlines", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "uae_q2_airline_bookings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "category_name"
     t.string "string"
     t.integer "keyword_id"
@@ -447,7 +453,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "uae_q2_bookings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "uae_q2_airlines", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "category_name"
     t.string "string"
     t.integer "keyword_id"
@@ -526,6 +532,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type", collation: "latin1_swedish_ci"
     t.string "exact_url_tracked", collation: "latin1_swedish_ci"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history", collation: "latin1_swedish_ci"
@@ -558,6 +565,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type", collation: "latin1_swedish_ci"
     t.string "exact_url_tracked", collation: "latin1_swedish_ci"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history", collation: "latin1_swedish_ci"
@@ -590,6 +598,7 @@ ActiveRecord::Schema.define(version: 2019_07_16_080904) do
     t.string "search_type"
     t.string "exact_url_tracked"
     t.integer "kw_start_position"
+    t.integer "target_position"
     t.integer "google_page"
     t.integer "google_rank"
     t.text "google_rank_history"

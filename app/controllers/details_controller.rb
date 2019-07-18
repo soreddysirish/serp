@@ -298,8 +298,8 @@ def category_details
 				category_table_name = KsaEnglishQ2Offer
 			when "UAE Q2 Airlines"
 				category_table_name = UaeQ2Airline
-			when "UAE Q2 Booking"
-				category_table_name = UaeQ2Booking
+			when "UAE Q2 Airline Booking"
+				category_table_name = UaeQ2AirlineBooking
 			when "UAE Q2 Generic"
 				category_table_name = UaeQ2Generic	
 			else
