@@ -40,7 +40,6 @@ namespace :serp  do
 			when "UAE Q2 Airlines"
 				table_name = UaeQ2Airline
 			when "UAE Q2 Airline Booking"
-				binding.pry
 				table_name = UaeQ2AirlineBooking
 			when "UAE Q2 Generic"
 				table_name = UaeQ2Generic	
