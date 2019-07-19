@@ -39,14 +39,15 @@ namespace :serp  do
 				table_name = KsaEnglishQ2Offer
 			when "UAE Q2 Airlines"
 				table_name = UaeQ2Airline
-			when "UAE Q2 Booking"
-				table_name = UaeQ2Booking
+			when "UAE Q2 Airline Booking"
+				binding.pry
+				table_name = UaeQ2AirlineBooking
 			when "UAE Q2 Generic"
 				table_name = UaeQ2Generic	
 			else
 				table_name = ""			
 			end
-			if table_name.present?
+			if table_name.present? && table_name == UaeQ2AirlineBooking
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
