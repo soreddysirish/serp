@@ -160,7 +160,8 @@ def category_details
 				if category_table_name.present? && category_table_name != ""
 					start_date = "2019-07-02"
 					current_date =  Date.today.to_s(:db)
-					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
+					# total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
+					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").group(:search_type,:keyword).pluck(:keyword,:search_type) rescue []
 					total_keywords_count = total_keywords.count
 					# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
 					# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
