@@ -103,13 +103,13 @@ def category_details
 						current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue "N/A"
 						current_date_ranks["mobile_target_position"] = cr.target_position rescue "N/A"
 						types["mobile_type"] = cr.search_type
-						tag["mobile_tag"] = cr.tags rescue ""
+						tags["mobile_tag"] = cr.tags rescue ""
 					else
 						current_date_ranks["desktop_rank"] = cr.google_rank rescue "N/A"
 						current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue "N/A"
 						current_date_ranks["desktop_target_position"] = cr.target_position rescue "N/A"
 						types["desktop_type"] = cr.search_type
-						tag["desktop_tag"] = cr.tags rescue ""
+						tags["desktop_tag"] = cr.tags rescue ""
 					end
 					ranks_obj["current_date_ranks"] = current_date_ranks
 					ranks_array << ranks_obj
