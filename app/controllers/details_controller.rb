@@ -160,8 +160,8 @@ def category_details
 				if category_table_name.present? && category_table_name != ""
 					start_date = "2019-07-02"
 					current_date =  Date.today.to_s(:db)
-					# total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
-					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").group(:search_type,:keyword).pluck(:keyword,:search_type) rescue []
+					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
+					# total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").group(:search_type,:keyword).pluck(:keyword,:search_type) rescue []
 					total_keywords_count = total_keywords.count
 					# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
 					# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
@@ -189,7 +189,7 @@ def category_details
 					target_top_4_10 = 0
 					target_above_10 = 0
 					target_unranked = 0
-					if category_table_current_grouped.present?
+					if category_table_start_grouped.present?
 						category_table_start_grouped.each do|rank,value|
 							if rank==1
 								start_top_1 += value
@@ -235,12 +235,12 @@ def category_details
 						end
 					end
 				end
-					start_date_total_keywords["unranked"] = start_unranked
-					current_date_total_keywords["unranked"] = current_unranked
-					start_date_total_keywords["rank_1"] = start_top_1 rescue 0
-					start_date_total_keywords["rank_2_3"] = start_top_2_3 rescue 0
-					start_date_total_keywords["rank_4_10"] = start_top_4_10 rescue 0
-					start_date_total_keywords["rank_above_10"] = start_above_10 rescue 0
+					start_date_total_keywords["unranked"] = start_unranked/2
+					current_date_total_keywords["unranked"] = current_unranked/2
+					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
+					start_date_total_keywords["rank_2_3"] = start_top_2_3/2 rescue 0
+					start_date_total_keywords["rank_4_10"] = start_top_4_10/2 rescue 0
+					start_date_total_keywords["rank_above_10"] = start_above_10/2 rescue 0
 					current_date_total_keywords["rank_1"] = current_top_1 rescue 0
 					current_date_total_keywords["rank_2_3"] = current_top_2_3 rescue 0
 					current_date_total_keywords["rank_4_10"] = current_top_4_10 rescue 0
