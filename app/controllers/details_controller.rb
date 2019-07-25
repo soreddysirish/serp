@@ -304,6 +304,10 @@ def category_details
 				category_table_name = UaeQ2AirlineBooking
 			when "UAE Q2 Generic"
 				category_table_name = UaeQ2Generic	
+		  when "Testing KSA"
+				table_name = "TestingKsa"
+			when "Temporary"
+				table_name = "Temporary"
 			else
 				category_table_name = ""			
 			end
