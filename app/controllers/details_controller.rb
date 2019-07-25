@@ -60,6 +60,7 @@ def category_details
 	        	"current_date_ranks"=>{"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => 0,"mobile_target_position" => 0,"types"=> {}}
 	        }
 	        types = {}
+	        tags = {}
 				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
@@ -92,7 +93,7 @@ def category_details
 					region = current_date_first_record.region  rescue ""
 					domain = current_date_first_record.url rescue ""
 					category_name = current_date_first_record.category_name rescue ""
-					tag = current_date_first_record.tags rescue ""
+					# tag = current_date_first_record.tags rescue ""
 					keyword = current_date_first_record.keyword rescue ""
 					search_volume = current_date_first_record.search_volume rescue ""
 					kw_start_position = current_date_first_record.kw_start_position rescue ""
@@ -102,16 +103,17 @@ def category_details
 						current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue "N/A"
 						current_date_ranks["mobile_target_position"] = cr.target_position rescue "N/A"
 						types["mobile_type"] = cr.search_type
+						tag["mobile_tag"] = cr.tags rescue ""
 					else
 						current_date_ranks["desktop_rank"] = cr.google_rank rescue "N/A"
 						current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue "N/A"
 						current_date_ranks["desktop_target_position"] = cr.target_position rescue "N/A"
 						types["desktop_type"] = cr.search_type
+						tag["desktop_tag"] = cr.tags rescue ""
 					end
 					ranks_obj["current_date_ranks"] = current_date_ranks
 					ranks_array << ranks_obj
 				end
-
 					if current_date_ranks["mobile_target_position"].to_i != 0 && current_date_ranks["desktop_target_position"].to_i != 0
 						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*100
 						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*100
@@ -123,12 +125,11 @@ def category_details
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tag,"keyword" => keyword,"start_date_ranks" =>"","current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => keyword,"start_date_ranks" =>"","current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 
 					# mobile_start_date_records = category_table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
 					# mobile_current_date_records = category_table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
 				end
-				
 				# start_date = eval(category_table_name.group(:keyword).first.last_update)["date"]
 				# current_date = Date.today.to_formatted_s(:long_ordinal)
 				table_columns = category_table_name.column_names
