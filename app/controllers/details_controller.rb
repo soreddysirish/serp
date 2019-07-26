@@ -64,7 +64,7 @@ def category_details
 				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
-				# start_date_records.each do |sr|
+				# start_date_records.each do |sr|i
 				# 	if sr.search_type == "sem"
 				# 		start_date_ranks["mobile_rank"] = sr.kw_start_position rescue 0
 				# 		types["mobile_type"] = sr.search_type
@@ -166,14 +166,30 @@ def category_details
 					total_keywords_count = total_keywords.count
 					# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
 					# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
-					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
+
+					start_date_rank_1 = category_table_name.where("Date(created_at)=? and google_rank = ?","#{start_date}",1).count
+					start_date_rank_2_3 = category_table_name.where("Date(created_at)=? and google_rank between (?)","#{start_date}",[2..3]).count
+					start_date_rank_4_10 = category_table_name.where("Date(created_at)=? and google_rank  between (?)","#{start_date}",[4..10]).count
+					start_date_rank_gt_10 = category_table_name.where("Date(created_at)=? and google_rank > ?","#{start_date}",10).count
+					start_unranked_0 = category_table_name.where("Date(created_at)=? and google_rank=0 or google_rank=''","#{start_date}").count
+
+
+
+
+					current_date_rank_1 = category_table_name.where("Date(created_at)=? and google_rank = ?",Date.today.to_s(:db),1).count
+					current_date_rank_2_3 = category_table_name.where("Date(created_at)=? and google_rank between (?)",Date.today.to_s(:db),[2..3]).count
+					current_date_rank_4_10 = category_table_name.where("Date(created_at)=? and google_rank between (?)",Date.today.to_s(:db),[4..10]).count
+					current_date_rank_gt_10 = category_table_name.where("Date(created_at)=? and google_rank > 10",Date.today.to_s(:db)).count
+					current_unranked_0 = category_table_name.where("Date(created_at)=? and google_rank=0 or google_rank=''",Date.today.to_s(:db)).count
+
+					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:keyword,:google_rank).count rescue {}
 					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
 					target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
 					unless category_table_start_grouped.present?  
 						start_date = "2019-07-18"
 						category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
 					end
-					current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
+					# current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
 					current_unranked = 0
 					current_top_1 = 0
 					current_top_2_3 = 0
@@ -235,8 +251,9 @@ def category_details
 						end
 					end
 				end
-					start_date_total_keywords["unranked"] = start_unranked/2
-					current_date_total_keywords["unranked"] = current_unranked/2
+				
+					start_date_total_keywords["unranked"] = start_unranked
+					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
 					start_date_total_keywords["rank_2_3"] = start_top_2_3/2 rescue 0
 					start_date_total_keywords["rank_4_10"] = start_top_4_10/2 rescue 0
@@ -250,6 +267,7 @@ def category_details
 					target_total_keywords["target_above_10"] = target_above_10 rescue 0
 					target_total_keywords["target_top_2_3"] = target_top_2_3 rescue 0
 					target_total_keywords["target_top_1"] = target_top_1 rescue 0
+
 					cat_obj["category_name"] = key
 					cat_obj["total_keywords"] = total_keywords
 					cat_obj["count"] = total_keywords_count

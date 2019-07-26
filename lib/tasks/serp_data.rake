@@ -50,7 +50,7 @@ namespace :serp  do
 			else
 				table_name = ""			
 			end
-			
+			 if table_name.present? && table_name == Visa
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
@@ -61,26 +61,25 @@ namespace :serp  do
 						p "**** #{table_name} data saved" 
 					end
 				end
-				Rake::Task["serp:update_IndiaHotel_category_table"].execute
+				# Rake::Task["serp:update_IndiaHotel_category_table"].execute
 
-				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
+				# Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
 
-				Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
+				# Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
 
-				Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
+				# Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
 
-				Rake::Task["serp:update_uae_domain_categories"].execute
+				# Rake::Task["serp:update_uae_domain_categories"].execute
 
-				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
+				# Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
 		
-				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
+				# Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
 
-				Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
+				# Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
 
-				Rake::Task["serp:update_ksa_domain_categories"].execute
-
-			end
-			
+				# Rake::Task["serp:update_ksa_domain_categories"].execute
+			 end
+		end
 	end
 	# run before  update_IndiaHotel_new_category_table task
 	task :update_IndiaHotel_category_table => :environment do 
