@@ -50,7 +50,7 @@ namespace :serp  do
 			else
 				table_name = ""			
 			end
-			if table_name.present? && table_name == UaeQ2AirlineBooking
+			
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
@@ -68,7 +68,7 @@ namespace :serp  do
 				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
 				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
 			end
-		end	
+			
 	end
 	task :update_IndiaHotel_category_table => :environment do 
 		CSV.foreach("public/csv_files/IndiaHotel.csv", :headers=>true).each_with_index do |row,index|

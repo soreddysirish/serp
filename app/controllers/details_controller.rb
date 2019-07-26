@@ -305,9 +305,9 @@ def category_details
 			when "UAE Q2 Generic"
 				category_table_name = UaeQ2Generic	
 		  when "Testing KSA"
-				table_name = "TestingKsa"
+				table_name = TestingKsa
 			when "Temporary"
-				table_name = "Temporary"
+				table_name = Temporary
 			else
 				category_table_name = ""			
 			end
