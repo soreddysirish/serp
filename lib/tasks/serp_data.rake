@@ -44,9 +44,9 @@ namespace :serp  do
 			when "UAE Q2 Generic"
 				table_name = UaeQ2Generic	
 			when "Testing KSA"
-				table_name = "TestingKsa"
+				table_name = TestingKsa
 			when "Temporary"
-				table_name = "Temporary"
+				table_name = Temporary
 			else
 				table_name = ""			
 			end
@@ -62,32 +62,33 @@ namespace :serp  do
 					end
 				end
 				Rake::Task["serp:update_IndiaHotel_category_table"].execute
-				Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
-				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
-				Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
-				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
+
 				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
+
+				Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
+
+				Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
+
+				Rake::Task["serp:update_uae_domain_categories"].execute
+
+				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
+		
+				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
+
+				Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
+
+				Rake::Task["serp:update_ksa_domain_categories"].execute
+
 			end
 			
 	end
+	# run before  update_IndiaHotel_new_category_table task
 	task :update_IndiaHotel_category_table => :environment do 
 		CSV.foreach("public/csv_files/IndiaHotel.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = IndiaHotel.where(keyword: row[0],search_type: 'se',quater_period: 2)
 			mobile_records = IndiaHotel.where(keyword: row[0],search_type: 'sem',quater_period: 2)
-			desktop_target_position = row[5].to_i
-			mobile_target_position = row[9].to_i
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
-		end
-		puts "@@@  updation done!!"
-	end
-	task :update_IndiaHotel_new_category_table => :environment do 
-		CSV.foreach("public/csv_files/IndiaHotel.csv", :headers=>true).each_with_index do |row,index|
-			desktop_records = IndiaHotel.where(keyword: row[0],search_type: 'se',quater_period: 2)
-			mobile_records = IndiaHotel.where(keyword: row[0],search_type: 'sem',quater_period: 2)
-			desktop_target_position = row[5].to_i
-			mobile_target_position = row[9].to_i
+			desktop_target_position = row[3].to_i
+			mobile_target_position = row[4].to_i
 			desktop_records.update_all(target_position: desktop_target_position)
 			mobile_records.update_all(target_position: mobile_target_position)
 			puts "#{index+1} - update for keyword #{row[0]} - done"
@@ -95,11 +96,24 @@ namespace :serp  do
 		puts "@@@  updation done!!"
 	end
 
+	task :update_IndiaHotel_new_category_table => :environment do 
+		CSV.foreach("public/csv_files/IndiaHotel.csv", :headers=>true).each_with_index do |row,index|
+			desktop_records = IndiaHotel.where(keyword: row[0],search_type: 'se',quater_period: 2)
+			mobile_records = IndiaHotel.where(keyword: row[0],search_type: 'sem',quater_period: 2)
+			desktop_target_position = row[3].to_i
+			mobile_target_position = row[4].to_i
+			desktop_records.update_all(target_position: desktop_target_position)
+			mobile_records.update_all(target_position: mobile_target_position)
+			puts "#{index+1} - update for keyword #{row[0]} - done"
+		end
+		puts "@@@  updation done!!"
+	end
+
+
 	task :update_uae_domain_categories => :environment do 
 		kas_csvs = Dir["public/csv_files/uae_csv_files/*.csv"]
 		kas_csvs.each do |csv|
 			CSV.foreach("#{csv}", :headers=>true).each_with_index do |row,index|
-				binding.pry
 				model_name = csv.split("/").last.gsub(".csv",'').constantize
 				desktop_records = model_name.where(keyword: row[0],search_type: 'se')
 				mobile_records = model_name.where(keyword: row[0],search_type: 'sem')
@@ -129,7 +143,7 @@ namespace :serp  do
 		end
 	end
 
-
+	# run before update_uae_domain_categories
 	task :update_UaeQ2Airline_category_table => :environment do 
 		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = UaeQ2Airline.where(keyword: row[0],search_type: 'se')
@@ -143,32 +157,7 @@ namespace :serp  do
 		puts "@@@  updation done!!"
 	end
 
-	task :update_UaeQ2AirlineBooking_category_table => :environment do 
-		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
-			desktop_records = UaeQ2AirlineBooking.where(keyword: row[0],search_type: 'se')
-			mobile_records = UaeQ2AirlineBooking.where(keyword: row[0],search_type: 'sem')
-			desktop_target_position = row[5].to_i
-			mobile_target_position = row[9].to_i
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
-		end
-		puts "@@@  updation done!!"
-	end
- 	
- 	task :update_UaeQ2Generic => :environment do 
-		CSV.foreach("public/csv_files/UaeQ2Airline.csv", :headers=>true).each_with_index do |row,index|
-			desktop_records = UaeQ2Generic.where(keyword: row[0],search_type: 'se')
-			mobile_records = UaeQ2Generic.where(keyword: row[0],search_type: 'sem')
-			desktop_target_position = row[5].to_i
-			mobile_target_position = row[9].to_i
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
-		end
-		puts "@@@  updation done!!"
-	end
-
+  # run before update_ksa_domain_categories
  	task :update_KsaEnglishQ2Airline_category_table => :environment do 
 		CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'se')
@@ -183,7 +172,7 @@ namespace :serp  do
 		end
 		puts "@@@  updation done!!"
 	end
-
+	# run before update_ksa_domain_categories
 	task :update_KsaEnglishQ2Generic_category_table => :environment do 
 		CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaEnglishQ2Generic.where(keyword: row[0],search_type: 'se')
@@ -199,7 +188,7 @@ namespace :serp  do
 		puts "@@@  updation done!!"
 	end
 
-
+	# run before update_ksa_domain_categories
 	task :update_KsaEnglishQ2Booking_category_table => :environment do 
 		CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaEnglishQ2Booking.where(keyword: row[0],search_type: 'se')
@@ -233,7 +222,8 @@ namespace :serp  do
 
 	
 
-	# need to change 
+	#  run before update_KsaArabicQ2_quater2_category_table task 
+
 	task :update_KsaArabicQ2_category_table => :environment do 
 		CSV.foreach("public/csv_files/KsaArabicQ2.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaArabicQ2.where(keyword: row[0],search_type: 'se')
@@ -250,7 +240,7 @@ namespace :serp  do
 	end
 
 	task :update_KsaArabicQ2_quater2_category_table => :environment do 
-		CSV.foreach("public/csv_files/quater_2/.csv", :headers=>true).each_with_index do |row,index|
+		CSV.foreach("public/csv_files/ksa_csv_files/KsaArabicQ2.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaArabicQ2.where(keyword: row[0],search_type: 'se')
 			mobile_records = KsaArabicQ2.where(keyword: row[0],search_type: 'sem')
 			desktop_target_position = row[5].to_i
