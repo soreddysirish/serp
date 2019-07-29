@@ -166,23 +166,17 @@ def category_details
 					total_keywords_count = total_keywords.count
 					# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
 					# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+				# start_date_total_keywords["top_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{start_date}").count rescue 0
+				# start_date_total_keywords["top_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{start_date}").count rescue 0
 
-					start_date_rank_1 = category_table_name.where("Date(created_at)=? and google_rank = ?","#{start_date}",1).count
-					start_date_rank_2_3 = category_table_name.where("Date(created_at)=? and google_rank between (?)","#{start_date}",[2..3]).count
-					start_date_rank_4_10 = category_table_name.where("Date(created_at)=? and google_rank  between (?)","#{start_date}",[4..10]).count
-					start_date_rank_gt_10 = category_table_name.where("Date(created_at)=? and google_rank > ?","#{start_date}",10).count
-					start_unranked_0 = category_table_name.where("Date(created_at)=? and google_rank=0 or google_rank=''","#{start_date}").count
+				# start_date_total_keywords["top_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{start_date}").count rescue 0
+				# start_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)" ,"#{start_date}").count rescue 0
+				# current_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{current_date}").count rescue 0
+				# current_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{current_date}").count rescue 0
+				# current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").count rescue 0
+				# current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").count rescue 0
 
-
-
-
-					current_date_rank_1 = category_table_name.where("Date(created_at)=? and google_rank = ?",Date.today.to_s(:db),1).count
-					current_date_rank_2_3 = category_table_name.where("Date(created_at)=? and google_rank between (?)",Date.today.to_s(:db),[2..3]).count
-					current_date_rank_4_10 = category_table_name.where("Date(created_at)=? and google_rank between (?)",Date.today.to_s(:db),[4..10]).count
-					current_date_rank_gt_10 = category_table_name.where("Date(created_at)=? and google_rank > 10",Date.today.to_s(:db)).count
-					current_unranked_0 = category_table_name.where("Date(created_at)=? and google_rank=0 or google_rank=''",Date.today.to_s(:db)).count
-
-					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:keyword,:google_rank).count rescue {}
+					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
 					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
 					target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
 					unless category_table_start_grouped.present?  
@@ -251,7 +245,6 @@ def category_details
 						end
 					end
 				end
-				
 					start_date_total_keywords["unranked"] = start_unranked
 					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
@@ -267,7 +260,6 @@ def category_details
 					target_total_keywords["target_above_10"] = target_above_10 rescue 0
 					target_total_keywords["target_top_2_3"] = target_top_2_3 rescue 0
 					target_total_keywords["target_top_1"] = target_top_1 rescue 0
-
 					cat_obj["category_name"] = key
 					cat_obj["total_keywords"] = total_keywords
 					cat_obj["count"] = total_keywords_count
