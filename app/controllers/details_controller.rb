@@ -64,7 +64,7 @@ class DetailsController < ApplicationController
 				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
-				# start_date_records.each do |sr|
+				# start_date_records.each do |sr|i
 				# 	if sr.search_type == "sem"
 				# 		start_date_ranks["mobile_rank"] = sr.kw_start_position rescue 0
 				# 		types["mobile_type"] = sr.search_type
@@ -166,6 +166,16 @@ class DetailsController < ApplicationController
 					total_keywords_count = total_keywords.count
 					# category_table_start_grouped = category_table_name.select("DISTINCT keyword").where("DISTINCT keyword and Date(created_at)=?","#{start_date}").group(:google_rank).count
 					# category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+				# start_date_total_keywords["top_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{start_date}").count rescue 0
+				# start_date_total_keywords["top_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{start_date}").count rescue 0
+
+				# start_date_total_keywords["top_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{start_date}").count rescue 0
+				# start_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)" ,"#{start_date}").count rescue 0
+				# current_date_total_keywords["rank_1"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",1,"#{current_date}").count rescue 0
+				# current_date_total_keywords["rank_2_3"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",2..3,"#{current_date}").count rescue 0
+				# current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").count rescue 0
+				# current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").count rescue 0
+
 					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
 					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
 					target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
@@ -173,7 +183,7 @@ class DetailsController < ApplicationController
 						start_date = "2019-07-25"
 						category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
 					end
-					current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
+					# current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
 					current_unranked = 0
 					current_top_1 = 0
 					current_top_2_3 = 0
@@ -241,6 +251,7 @@ class DetailsController < ApplicationController
 							end
 						end
 					end
+				end
 					start_date_total_keywords["unranked"] = start_unranked
 					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
