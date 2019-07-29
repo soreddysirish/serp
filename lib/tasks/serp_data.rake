@@ -61,23 +61,23 @@ namespace :serp  do
 						p "**** #{table_name} data saved" 
 					end
 				end
-				# Rake::Task["serp:update_IndiaHotel_category_table"].execute
+				Rake::Task["serp:update_IndiaHotel_category_table"].execute
 
-				# Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
+				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
 
-				# Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
+				Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
 
-				# Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
+				Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
 
-				# Rake::Task["serp:update_uae_domain_categories"].execute
+				Rake::Task["serp:update_uae_domain_categories"].execute
 
-				# Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
+				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
 		
-				# Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
+				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
 
-				# Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
+				Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
 
-				# Rake::Task["serp:update_ksa_domain_categories"].execute
+				Rake::Task["serp:update_ksa_domain_categories"].execute
 			 end
 		end
 	end
@@ -135,6 +135,7 @@ namespace :serp  do
 				mobile_records = model_name.where(keyword: row[0],search_type: 'sem')
 				desktop_target_position = row[4].to_i
 				mobile_target_position = row[7].to_i
+
 				desktop_records.update_all(target_position: desktop_target_position)
 				mobile_records.update_all(target_position: mobile_target_position)
 				puts "#{index+1} - update for categrory - #{model_name} for keyword #{row[0]} - done"
@@ -239,7 +240,7 @@ namespace :serp  do
 	end
 
 	task :update_KsaArabicQ2_quater2_category_table => :environment do 
-		CSV.foreach("public/csv_files/ksa_csv_files/KsaArabicQ2.csv", :headers=>true).each_with_index do |row,index|
+		CSV.foreach("public/csv_files/KsaArabicQ2_new.csv", :headers=>true).each_with_index do |row,index|
 			desktop_records = KsaArabicQ2.where(keyword: row[0],search_type: 'se')
 			mobile_records = KsaArabicQ2.where(keyword: row[0],search_type: 'sem')
 			desktop_target_position = row[5].to_i
