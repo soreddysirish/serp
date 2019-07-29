@@ -61,6 +61,7 @@ namespace :serp  do
 						p "**** #{table_name} data saved" 
 					end
 				end
+				# follow this order only 
 				Rake::Task["serp:update_IndiaHotel_category_table"].execute
 
 				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
@@ -135,7 +136,6 @@ namespace :serp  do
 				mobile_records = model_name.where(keyword: row[0],search_type: 'sem')
 				desktop_target_position = row[4].to_i
 				mobile_target_position = row[7].to_i
-
 				desktop_records.update_all(target_position: desktop_target_position)
 				mobile_records.update_all(target_position: mobile_target_position)
 				puts "#{index+1} - update for categrory - #{model_name} for keyword #{row[0]} - done"

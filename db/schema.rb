@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_25_115716) do
+ActiveRecord::Schema.define(version: 2019_07_29_064251) do
 
   create_table "aeq1_hotels_keywords", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "category_name"
@@ -651,6 +651,14 @@ ActiveRecord::Schema.define(version: 2019_07_25_115716) do
     t.string "featured_url", limit: 250
     t.string "last_update", collation: "latin1_swedish_ci"
     t.integer "quater_period"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
