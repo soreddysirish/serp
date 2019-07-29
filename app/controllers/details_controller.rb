@@ -251,7 +251,6 @@ class DetailsController < ApplicationController
 							end
 						end
 					end
-				end
 					start_date_total_keywords["unranked"] = start_unranked
 					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
