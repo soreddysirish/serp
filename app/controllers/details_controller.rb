@@ -34,7 +34,7 @@ class DetailsController < ApplicationController
 			render json: list
 		end
 
-def category_details
+		def category_details
 			@category_name = params[:category_name].split("_").join(" ")
 			if @category_name == "Emirates UAE Campaign" 
 				@category_name = "Emirates - UAE Campaign" 
@@ -57,10 +57,10 @@ def category_details
 				# kw_start_position = first_record.kw_start_position rescue ""
 				ranks_array = []
 				ranks_obj = { "start_date_ranks" => {"desktop_rank"=> "","mobile_rank"=>""},						
-	        	"current_date_ranks"=>{"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => 0,"mobile_target_position" => 0,"types"=> {}}
-	        }
-	        types = {}
-	        tags = {}
+				"current_date_ranks"=>{"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => 0,"mobile_target_position" => 0,"types"=> {}}
+			}
+			types = {}
+			tags = {}
 				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
 				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
@@ -76,44 +76,44 @@ def category_details
 				# 	ranks_obj["types"] = types
 				# 	ranks_array << ranks_obj
 				# end
-					current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
-					current_date_first_record = current_date_records.first
-					google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
-					cycle_changes = {}
-					cycle_changes["day_change"] = current_date_first_record.day_change rescue ""
-					cycle_changes["week_change"] = current_date_first_record.week_change rescue ""
-					cycle_changes["month_change"] = current_date_first_record.month_change rescue ""
-					cycle_changes["life_change"] = current_date_first_record.life_change rescue ""
-					google_ranking_url = current_date_first_record.ranking_url rescue ""
-					google_page = current_date_first_record.google_page rescue ""
-					google_rank = current_date_first_record.google_rank rescue ""
-					bing_rank = current_date_first_record.bing_rank rescue ""
-					yahoo_rank = current_date_first_record.yahoo_rank rescue  ""
-					language = current_date_first_record.language rescue ""
-					region = current_date_first_record.region  rescue ""
-					domain = current_date_first_record.url rescue ""
-					category_name = current_date_first_record.category_name rescue ""
+				current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
+				current_date_first_record = current_date_records.first
+				google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
+				cycle_changes = {}
+				cycle_changes["day_change"] = current_date_first_record.day_change rescue ""
+				cycle_changes["week_change"] = current_date_first_record.week_change rescue ""
+				cycle_changes["month_change"] = current_date_first_record.month_change rescue ""
+				cycle_changes["life_change"] = current_date_first_record.life_change rescue ""
+				google_ranking_url = current_date_first_record.ranking_url rescue ""
+				google_page = current_date_first_record.google_page rescue ""
+				google_rank = current_date_first_record.google_rank rescue ""
+				bing_rank = current_date_first_record.bing_rank rescue ""
+				yahoo_rank = current_date_first_record.yahoo_rank rescue  ""
+				language = current_date_first_record.language rescue ""
+				region = current_date_first_record.region  rescue ""
+				domain = current_date_first_record.url rescue ""
+				category_name = current_date_first_record.category_name rescue ""
 					# tag = current_date_first_record.tags rescue ""
 					keyword = current_date_first_record.keyword rescue ""
 					search_volume = current_date_first_record.search_volume rescue ""
 					kw_start_position = current_date_first_record.kw_start_position rescue ""
 					current_date_records.each do |cr|
-					if cr.search_type == "sem"
-						current_date_ranks["mobile_rank"] = cr.google_rank rescue "N/A"
-						current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue "N/A"
-						current_date_ranks["mobile_target_position"] = cr.target_position rescue "N/A"
-						types["mobile_type"] = cr.search_type
-						tags["mobile_tag"] = cr.tags rescue ""
-					else
-						current_date_ranks["desktop_rank"] = cr.google_rank rescue "N/A"
-						current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue "N/A"
-						current_date_ranks["desktop_target_position"] = cr.target_position rescue "N/A"
-						types["desktop_type"] = cr.search_type
-						tags["desktop_tag"] = cr.tags rescue ""
+						if cr.search_type == "sem"
+							current_date_ranks["mobile_rank"] = cr.google_rank rescue "N/A"
+							current_date_ranks["moblie_intial_position"] = cr.kw_start_position rescue "N/A"
+							current_date_ranks["mobile_target_position"] = cr.target_position rescue "N/A"
+							types["mobile_type"] = cr.search_type
+							tags["mobile_tag"] = cr.tags rescue ""
+						else
+							current_date_ranks["desktop_rank"] = cr.google_rank rescue "N/A"
+							current_date_ranks["desktop_intial_position"] = cr.kw_start_position rescue "N/A"
+							current_date_ranks["desktop_target_position"] = cr.target_position rescue "N/A"
+							types["desktop_type"] = cr.search_type
+							tags["desktop_tag"] = cr.tags rescue ""
+						end
+						ranks_obj["current_date_ranks"] = current_date_ranks
+						ranks_array << ranks_obj
 					end
-					ranks_obj["current_date_ranks"] = current_date_ranks
-					ranks_array << ranks_obj
-				end
 					if current_date_ranks["mobile_target_position"].to_i != 0 && current_date_ranks["desktop_target_position"].to_i != 0
 						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*100
 						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*100
@@ -190,7 +190,7 @@ def category_details
 					target_above_10 = 0
 					target_unranked = 0
 					if category_table_start_grouped.present?
-						
+						not_tracked = []
 						category_table_start_grouped.each do|rank,value|
 							if rank==1
 								start_top_1 += value
@@ -201,7 +201,8 @@ def category_details
 							elsif rank > 10
 								start_above_10 += value
 							else
-								start_unranked += value
+								not_tracked << value
+								start_unranked = not_tracked.reduce(:+) rescue 0
 							end
 						end
 					end
@@ -222,22 +223,24 @@ def category_details
 							end
 						end
 					end
-				if target_grouped.present?
-					target_grouped.each do |rank,value|
-						rank = rank.nil? ? 0 : rank 
-						if rank==1
-							target_top_1 += value
-						elsif rank==2 || rank==3
-							target_top_2_3 += value
-						elsif rank > 3 && rank < 11
-							target_top_4_10 += value
-						elsif rank > 10
-							target_above_10 +=  value
-						else
-							target_unranked += value
+					if target_grouped.present?
+						not_tracked = []
+						target_grouped.each do |rank,value|
+							rank = rank.nil? ? 0 : rank 
+							if rank==1
+								target_top_1 += value
+							elsif rank==2 || rank==3
+								target_top_2_3 += value
+							elsif rank > 3 && rank < 11
+								target_top_4_10 += value
+							elsif rank > 10
+								target_above_10 +=  value
+							else
+								not_tracked << value
+								target_unranked = not_tracked.reduce(:+) rescue 0
+							end
 						end
 					end
-				end
 					start_date_total_keywords["unranked"] = start_unranked
 					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
@@ -262,8 +265,8 @@ def category_details
 					categories_array.push(JSON.parse(cat_obj.to_json))
 					puts "#{index} is completed"
 				end
- 			end
- 			render json: categories_array
+			end
+			render json: categories_array
 		end
 
 		def get_table_name(key)
@@ -306,7 +309,7 @@ def category_details
 				category_table_name = UaeQ2AirlineBooking
 			when "UAE Q2 Generic"
 				category_table_name = UaeQ2Generic	
-		  when "Testing KSA"
+			when "Testing KSA"
 				table_name = TestingKsa
 			when "Temporary"
 				table_name = Temporary
