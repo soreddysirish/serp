@@ -1,7 +1,6 @@
 class DetailsController < ApplicationController
 
 	def dashboard
-
 		# categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600") - old key
 		categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 		categories_keys = categories_list.keys
@@ -277,6 +276,22 @@ class DetailsController < ApplicationController
 				end
 			end
 			render json: categories_array
+		end
+
+
+		def authenticate_user
+			@user = User.find_by(name:params["username"])
+			if @user.present?
+				if @user.authenticate(params["password"])
+					secret = Rails.application.secrets.secret_key_base 
+					data={ name:params["username"] }
+					pay_load={data:data,exp: (Time.now+10.minutes).to_i}
+					token = JWT.encode(pay_load,secret,'HS256')
+					render json: {token:token},status:200
+				end
+			else
+				render json:{error: 'unauthorised user'},status: 500
+			end
 		end
 
 		def get_table_name(key)

@@ -110,6 +110,7 @@ GEM
     io-like (0.3.0)
     jbuilder (2.9.1)
       activesupport (>= 4.2.0)
+    jwt (2.1.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -248,6 +249,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   httparty
   jbuilder (~> 2.5)
+  jwt
   mysql2 (>= 0.4.4, < 0.6.0)
   pry
   puma (~> 3.11)
