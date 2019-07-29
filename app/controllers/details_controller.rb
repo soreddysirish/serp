@@ -170,7 +170,7 @@ def category_details
 					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
 					target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
 					unless category_table_start_grouped.present?  
-						start_date = "2019-07-18"
+						start_date = "2019-07-25"
 						category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
 					end
 					current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
@@ -190,6 +190,7 @@ def category_details
 					target_above_10 = 0
 					target_unranked = 0
 					if category_table_start_grouped.present?
+						
 						category_table_start_grouped.each do|rank,value|
 							if rank==1
 								start_top_1 += value
@@ -205,6 +206,7 @@ def category_details
 						end
 					end
 					if category_table_current_grouped.present?
+						not_tracked = []
 						category_table_current_grouped.each do|rank,value|
 							if rank==1
 								current_top_1 += value
@@ -215,7 +217,8 @@ def category_details
 							elsif rank > 10
 								current_above_10 += value
 							else
-								current_unranked += value
+								not_tracked << value
+								current_unranked = not_tracked.reduce(:+) rescue 0
 							end
 						end
 					end
@@ -235,8 +238,8 @@ def category_details
 						end
 					end
 				end
-					start_date_total_keywords["unranked"] = start_unranked/2
-					current_date_total_keywords["unranked"] = current_unranked/2
+					start_date_total_keywords["unranked"] = start_unranked
+					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
 					start_date_total_keywords["rank_2_3"] = start_top_2_3/2 rescue 0
 					start_date_total_keywords["rank_4_10"] = start_top_4_10/2 rescue 0
