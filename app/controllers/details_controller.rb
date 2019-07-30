@@ -287,7 +287,7 @@ class DetailsController < ApplicationController
 					data={ name:params["username"] }
 					pay_load={data:data,exp: (Time.now+10.minutes).to_i}
 					token = JWT.encode(pay_load,secret,'HS256')
-					render json: {token:token},status:200
+					render json: {token:token},status: 200
 				end
 			else
 				render json:{error: 'unauthorised user'},status: 500
