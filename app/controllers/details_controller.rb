@@ -285,7 +285,7 @@ class DetailsController < ApplicationController
 				if @user.authenticate(params["password"])
 					secret = Rails.application.secrets.secret_key_base 
 					data={ name:params["username"] }
-					pay_load={data:data,exp: (Time.now+10.minutes).to_i}
+					pay_load={data:data,exp: (Time.now+30.minutes).to_i}
 					token = JWT.encode(pay_load,secret,'HS256')
 					render json: {token:token},status: 200
 				end
