@@ -26,7 +26,7 @@ namespace :serp  do
 			when "Visa"
 				table_name = Visa
 			when "Flight India - Q2"
-					table_name = FlightIndiaQ2
+				table_name = FlightIndiaQ2
 			when "KSA Arabic Q2"
 				table_name = KsaArabicQ2
 			when "KSA English Q2 Airlines"
@@ -50,7 +50,7 @@ namespace :serp  do
 			else
 				table_name = ""			
 			end
-			 if table_name.present? && table_name == Visa
+			if table_name.present? 
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
@@ -61,6 +61,8 @@ namespace :serp  do
 						p "**** #{table_name} data saved" 
 					end
 				end
+			end
+		end
 				# follow this order only 
 				Rake::Task["serp:update_IndiaHotel_category_table"].execute
 
@@ -73,14 +75,12 @@ namespace :serp  do
 				Rake::Task["serp:update_uae_domain_categories"].execute
 
 				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
-		
+
 				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
 
 				Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
 
 				Rake::Task["serp:update_ksa_domain_categories"].execute
-			 end
-		end
 	end
 	# run before  update_IndiaHotel_new_category_table task
 	task :update_IndiaHotel_category_table => :environment do 
@@ -158,20 +158,20 @@ namespace :serp  do
 	end
 
   # run before update_ksa_domain_categories
- 	task :update_KsaEnglishQ2Airline_category_table => :environment do 
-		CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
-			desktop_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'se')
-			mobile_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'sem')
-			desktop_target_position = row[4].to_i
-			mobile_target_position = row[7].to_i
-			if desktop_records.any? || mobile_records.any? 
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
-			end
-		end
-		puts "@@@  updation done!!"
-	end
+  task :update_KsaEnglishQ2Airline_category_table => :environment do 
+  	CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
+  		desktop_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'se')
+  		mobile_records = KsaEnglishQ2Airline.where(keyword: row[0],search_type: 'sem')
+  		desktop_target_position = row[4].to_i
+  		mobile_target_position = row[7].to_i
+  		if desktop_records.any? || mobile_records.any? 
+  			desktop_records.update_all(target_position: desktop_target_position)
+  			mobile_records.update_all(target_position: mobile_target_position)
+  			puts "#{index+1} - update for keyword #{row[0]} - done"
+  		end
+  	end
+  	puts "@@@  updation done!!"
+  end
 	# run before update_ksa_domain_categories
 	task :update_KsaEnglishQ2Generic_category_table => :environment do 
 		CSV.foreach("public/csv_files/KsaEnglishQ2Airline.csv", :headers=>true).each_with_index do |row,index|
@@ -180,9 +180,9 @@ namespace :serp  do
 			desktop_target_position = row[4].to_i
 			mobile_target_position = row[7].to_i
 			if desktop_records.any? || mobile_records.any? 
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
+				desktop_records.update_all(target_position: desktop_target_position)
+				mobile_records.update_all(target_position: mobile_target_position)
+				puts "#{index+1} - update for keyword #{row[0]} - done"
 			end
 		end
 		puts "@@@  updation done!!"
@@ -196,9 +196,9 @@ namespace :serp  do
 			desktop_target_position = row[4].to_i
 			mobile_target_position = row[7].to_i
 			if desktop_records.any? || mobile_records.any? 
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
+				desktop_records.update_all(target_position: desktop_target_position)
+				mobile_records.update_all(target_position: mobile_target_position)
+				puts "#{index+1} - update for keyword #{row[0]} - done"
 			end
 		end
 		puts "@@@  updation done!!"
@@ -212,9 +212,9 @@ namespace :serp  do
 			desktop_target_position = row[4].to_i
 			mobile_target_position = row[5].to_i
 			if desktop_records.any? || mobile_records.any? 
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
+				desktop_records.update_all(target_position: desktop_target_position)
+				mobile_records.update_all(target_position: mobile_target_position)
+				puts "#{index+1} - update for keyword #{row[0]} - done"
 			end
 		end
 		puts "@@@  updation done!!"
@@ -231,9 +231,9 @@ namespace :serp  do
 			desktop_target_position = row[5].to_i
 			mobile_target_position = row[8].to_i
 			if desktop_records.any? || mobile_records.any? 
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
+				desktop_records.update_all(target_position: desktop_target_position)
+				mobile_records.update_all(target_position: mobile_target_position)
+				puts "#{index+1} - update for keyword #{row[0]} - done"
 			end
 		end
 		puts "@@@  updation done!!"
@@ -246,9 +246,9 @@ namespace :serp  do
 			desktop_target_position = row[5].to_i
 			mobile_target_position = row[8].to_i
 			if desktop_records.any? || mobile_records.any? 
-			desktop_records.update_all(target_position: desktop_target_position)
-			mobile_records.update_all(target_position: mobile_target_position)
-			puts "#{index+1} - update for keyword #{row[0]} - done"
+				desktop_records.update_all(target_position: desktop_target_position)
+				mobile_records.update_all(target_position: mobile_target_position)
+				puts "#{index+1} - update for keyword #{row[0]} - done"
 			end
 		end
 		puts "@@@  updation done!!"
