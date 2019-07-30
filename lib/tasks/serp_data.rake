@@ -52,7 +52,7 @@ namespace :serp  do
 			else
 				table_name = ""			
 			end
-			if table_name.present? 
+			if table_name.present?
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
