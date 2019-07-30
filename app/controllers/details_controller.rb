@@ -314,8 +314,12 @@ class DetailsController < ApplicationController
 				category_table_name = Uaeq1Activity
 			when "UAE Q1 Keywords"
 				category_table_name= Uaeq1Keyword
-			when "Visa"
+			when "Visa All"
 				category_table_name = Visa
+			when "Visa UAE - Q2"
+				category_table_name = VisaUaeQ2
+			when  "Visa UAE Q2"
+				category_table_name = VisaUaeQ2
 			when "Flight India - Q2"
 				category_table_name = FlightIndiaQ2
 			when "KSA Arabic Q2"

@@ -23,8 +23,10 @@ namespace :serp  do
 				table_name = Uaeq1Activity
 			when "UAE Q1 Keywords"
 				table_name=Uaeq1Keyword
-			when "Visa"
+			when "Visa All"
 				table_name = Visa
+			when "Visa UAE - Q2"
+				table_name = VisaUaeQ2
 			when "Flight India - Q2"
 				table_name = FlightIndiaQ2
 			when "KSA Arabic Q2"
@@ -266,7 +268,7 @@ end
 
 
 
-	# rails g model TestingKsa category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer 
+	# rails g model  VisaUaeQ2 category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer 
 
 # alter table visas add column region varchar(50) AFTER keyword,add column language varchar(10) AFTER keyword, add column google_page int AFTER kw_start_position, add column featured_url varchar(250) AFTER tags;
 
