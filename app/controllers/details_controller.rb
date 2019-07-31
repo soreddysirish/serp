@@ -39,6 +39,8 @@ class DetailsController < ApplicationController
 				@category_name = "Emirates - UAE Campaign" 
 			elsif @category_name == "Flight India Q2"
 				@category_name  = "Flight India - Q2"
+			elsif @category_name == "Visa UAE Q2"
+				@category_name = "Visa UAE - Q2"
 			end
 			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 			categories_keys = categories_list.keys
