@@ -53,7 +53,7 @@ class DetailsController < ApplicationController
 
 				category_details_obj = []
 				keywords.each do |kw|
-				# start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
+				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				# first_record  = start_date_records.first rescue ""
 				# kw_start_position = first_record.kw_start_position rescue ""
 				ranks_array = []
@@ -62,21 +62,21 @@ class DetailsController < ApplicationController
 			}
 			types = {}
 			tags = {}
-				# start_date_ranks = {"mobile_rank" => "","desktop_rank" => ""}
+				start_date_ranks = {"moblie_intial_position" => "","desktop_intial_position" => ""}
 				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
 				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
-				# start_date_records.each do |sr|i
-				# 	if sr.search_type == "sem"
-				# 		start_date_ranks["mobile_rank"] = sr.kw_start_position rescue 0
-				# 		types["mobile_type"] = sr.search_type
-				# 	else 
-				# 		start_date_ranks["desktop_rank"] = sr.kw_start_position rescue 0
-				# 		types["desktop_type"] = sr.search_type
-				# 	end
-				# 	ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
-				# 	ranks_obj["types"] = types
-				# 	ranks_array << ranks_obj
-				# end
+				start_date_records.each do |sr|
+					if sr.search_type == "sem"
+						start_date_ranks["moblie_intial_position"] = sr.kw_start_position rescue 0
+						types["mobile_type"] = sr.search_type
+					else 
+						start_date_ranks["desktop_intial_position"] = sr.kw_start_position rescue 0
+						types["desktop_type"] = sr.search_type
+					end
+					ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
+					ranks_obj["types"] = types
+					ranks_array << ranks_obj
+				end
 				current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
 				current_date_first_record = current_date_records.first
 				google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
@@ -88,15 +88,21 @@ class DetailsController < ApplicationController
 				google_ranking_url = current_date_first_record.ranking_url rescue ""
 				google_page = current_date_first_record.google_page rescue ""
 				google_rank = current_date_first_record.google_rank rescue ""
-				bing_rank = current_date_first_record.bing_rank rescue ""
-				yahoo_rank = current_date_first_record.yahoo_rank rescue  ""
-				language = current_date_first_record.language rescue ""
-				region = current_date_first_record.region  rescue ""
-				domain = current_date_first_record.url rescue ""
+				bing_rank = current_date_first_record.bing_rank  rescue ""
+				yahoo_rank = current_date_first_record.yahoo_rank  rescue  ""
+				language = current_date_first_record.language.present? ? current_date_first_record.language : start_date_records.first.language   rescue ""
+				region = current_date_first_record.region.present? ? current_date_first_record.region : start_date_records.first.region  rescue ""
+				domain = current_date_first_record.url.present? ? current_date_first_record.url : start_date_records.first.url  rescue ""
 				category_name = current_date_first_record.category_name rescue ""
 					# tag = current_date_first_record.tags rescue ""
-					keyword = current_date_first_record.keyword rescue ""
-					search_volume = current_date_first_record.search_volume rescue ""
+					keyword = kw rescue ""
+					current_search_volume = current_date_first_record.search_volume rescue ""
+					if  current_search_volume.present? && current_search_volume > 0 
+						search_volume = current_search_volume
+					else
+						search_volume = start_date_records.first.search_volume rescue ""
+					end
+
 					kw_start_position = current_date_first_record.kw_start_position rescue ""
 					current_date_records.each do |cr|
 						if cr.search_type == "sem"
@@ -126,13 +132,10 @@ class DetailsController < ApplicationController
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => keyword,"start_date_ranks" =>"","current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
-
-					# mobile_start_date_records = category_table_name.where("keyword=? and Date(created_at) = ? and search_type='sem'",kw, "2019-07-02")
-					# mobile_current_date_records = category_table_name.where("keyword=? and Date(created_at) = ?  and search_type='sem'", Date.today.to_s(:db))
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 				end
-				# start_date = eval(category_table_name.group(:keyword).first.last_update)["date"]
-				# current_date = Date.today.to_formatted_s(:long_ordinal)
+
+				
 				table_columns = category_table_name.column_names
 				table_columns.push("start_date","current_date")
 				heading_obj = {}
