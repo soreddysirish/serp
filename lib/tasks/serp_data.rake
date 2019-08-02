@@ -53,6 +53,7 @@ namespace :serp  do
 				table_name = ""			
 			end
 			if table_name.present?
+				table_name.where("created_at >=?",Time.now.beginning_of_day).delete_all
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
