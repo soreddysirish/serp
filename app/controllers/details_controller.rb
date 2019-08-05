@@ -49,11 +49,12 @@ class DetailsController < ApplicationController
 			table_headings = {"category_name" => "Category Name","tags" => "Tag","keyword" => "Keyword","start_date" => "Start Date","current_date" => "Current Date","percentage" => "Percentage","search_volume"=> "Search Volume","kw_start_position" => "Keyword Start Position","google_rank_history" => "Google Rank History","day_change" => "Day","week_change"=> "Week","month_change"=>"Month", "life_change" => "Life Change","region" => "Region","language"=>"Language"}
 			if category_exist
 				category_table_name = get_table_name(@category_name)
-				keywords = category_table_name.all.pluck(:keyword).uniq
+				if category_table_name.present? && category_table_name !=""
+					keywords = category_table_name.all.pluck(:keyword).uniq
 
-				category_details_obj = []
-				keywords.each do |kw|
-				start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
+					category_details_obj = []
+					keywords.each do |kw|
+						start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
 				# first_record  = start_date_records.first rescue ""
 				# kw_start_position = first_record.kw_start_position rescue ""
 				ranks_array = []
@@ -62,38 +63,38 @@ class DetailsController < ApplicationController
 			}
 			types = {}
 			tags = {}
-				start_date_ranks = {"moblie_intial_position" => "","desktop_intial_position" => ""}
-				current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
-				search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
-				start_date_records.each do |sr|
-					if sr.search_type == "sem"
-						start_date_ranks["moblie_intial_position"] = sr.kw_start_position rescue 0
-						types["mobile_type"] = sr.search_type
-					else 
-						start_date_ranks["desktop_intial_position"] = sr.kw_start_position rescue 0
-						types["desktop_type"] = sr.search_type
-					end
-					ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
-					ranks_obj["types"] = types
-					ranks_array << ranks_obj
+			start_date_ranks = {"moblie_intial_position" => "","desktop_intial_position" => ""}
+			current_date_ranks = {"moblie_intial_position"=>"","desktop_intial_position"=>"","mobile_rank" => "","desktop_rank" => "","desktop_target_position" => "","mobile_target_position" => ""}
+			search_volumes = {"mobile_search_volume"=> 0,"desktop_search_volume"=>0}
+			start_date_records.each do |sr|
+				if sr.search_type == "sem"
+					start_date_ranks["moblie_intial_position"] = sr.kw_start_position rescue 0
+					types["mobile_type"] = sr.search_type
+				else 
+					start_date_ranks["desktop_intial_position"] = sr.kw_start_position rescue 0
+					types["desktop_type"] = sr.search_type
 				end
-				current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
-				current_date_first_record = current_date_records.first
-				google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
-				cycle_changes = {}
-				cycle_changes["day_change"] = current_date_first_record.day_change rescue ""
-				cycle_changes["week_change"] = current_date_first_record.week_change rescue ""
-				cycle_changes["month_change"] = current_date_first_record.month_change rescue ""
-				cycle_changes["life_change"] = current_date_first_record.life_change rescue ""
-				google_ranking_url = current_date_first_record.ranking_url rescue ""
-				google_page = current_date_first_record.google_page rescue ""
-				google_rank = current_date_first_record.google_rank rescue ""
-				bing_rank = current_date_first_record.bing_rank  rescue ""
-				yahoo_rank = current_date_first_record.yahoo_rank  rescue  ""
-				language = current_date_first_record.language.present? ? current_date_first_record.language : start_date_records.first.language   rescue ""
-				region = current_date_first_record.region.present? ? current_date_first_record.region : start_date_records.first.region  rescue ""
-				domain = current_date_first_record.url.present? ? current_date_first_record.url : start_date_records.first.url  rescue ""
-				category_name = current_date_first_record.category_name rescue ""
+				ranks_obj["start_date_ranks"] = start_date_ranks rescue 0
+				ranks_obj["types"] = types
+				ranks_array << ranks_obj
+			end
+			current_date_records = category_table_name.where("keyword=? and Date(created_at) = ? ",kw, Date.today.to_s(:db))
+			current_date_first_record = current_date_records.first
+			google_rank_history = eval(current_date_first_record.google_rank_history) rescue []
+			cycle_changes = {}
+			cycle_changes["day_change"] = current_date_first_record.day_change rescue ""
+			cycle_changes["week_change"] = current_date_first_record.week_change rescue ""
+			cycle_changes["month_change"] = current_date_first_record.month_change rescue ""
+			cycle_changes["life_change"] = current_date_first_record.life_change rescue ""
+			google_ranking_url = current_date_first_record.ranking_url rescue ""
+			google_page = current_date_first_record.google_page rescue ""
+			google_rank = current_date_first_record.google_rank rescue ""
+			bing_rank = current_date_first_record.bing_rank  rescue ""
+			yahoo_rank = current_date_first_record.yahoo_rank  rescue  ""
+			language = current_date_first_record.language.present? ? current_date_first_record.language : start_date_records.first.language   rescue ""
+			region = current_date_first_record.region.present? ? current_date_first_record.region : start_date_records.first.region  rescue ""
+			domain = current_date_first_record.url.present? ? current_date_first_record.url : start_date_records.first.url  rescue ""
+			category_name = current_date_first_record.category_name rescue ""
 					# tag = current_date_first_record.tags rescue ""
 					keyword = kw rescue ""
 					current_search_volume = current_date_first_record.search_volume rescue ""
@@ -147,24 +148,25 @@ class DetailsController < ApplicationController
 				# 	end
 				# end
 			end
-			render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
 		end
+		render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
+	end
 
-		def overall_categories_view
-			categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
-			categories_keys = categories_list.keys
-			categories_array = []
-			cat_obj ={}
-			category_name = ""
-			start_date_total_keywords = {}
-			current_date_total_keywords = {}
-			target_total_keywords ={}
-			categories_keys.each_with_index do |key,index|
-				category_name = key
-				category_table_name = get_table_name(key)
-				if category_table_name.present? && category_table_name != ""
-					start_date = "2019-07-02"
-					current_date =  Date.today.to_s(:db)
+	def overall_categories_view
+		categories_list  = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
+		categories_keys = categories_list.keys
+		categories_array = []
+		cat_obj ={}
+		category_name = ""
+		start_date_total_keywords = {}
+		current_date_total_keywords = {}
+		target_total_keywords ={}
+		categories_keys.each_with_index do |key,index|
+			category_name = key
+			category_table_name = get_table_name(key)
+			if category_table_name.present? && category_table_name != ""
+				start_date = "2019-07-02"
+				current_date =  Date.today.to_s(:db)
 					# total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
 					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").group(:search_type,:keyword).pluck(:keyword) rescue []
 					total_keywords_count = total_keywords.count
@@ -180,13 +182,13 @@ class DetailsController < ApplicationController
 				# current_date_total_keywords["rank_4_10"] = category_table_name.where("google_rank in (?) and Date(created_at)=?",4..10,"#{current_date}").count rescue 0
 				# current_date_total_keywords["rank_above_10"] = category_table_name.where("google_rank > 10 and Date(created_at)","#{current_date}").count rescue 0
 
-					category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
-					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
-					target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
-					unless category_table_start_grouped.present?  
-						start_date = "2019-07-25"
-						category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
-					end
+				category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
+				category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
+				target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
+				unless category_table_start_grouped.present?  
+					start_date = "2019-07-25"
+					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+				end
 					# current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
 					current_unranked = 0
 					current_top_1 = 0
