@@ -292,7 +292,7 @@ class DetailsController < ApplicationController
 			if @user.present?
 				obj["name"] = params["username"]
 				if @user.authenticate(params["password"])
-					obj['authenticate'] = true
+					obj['auth'] = true
 					secret = Rails.application.secrets.secret_key_base 
 					data={name:params["username"]}
 					pay_load={data:data,exp: (Time.now+30.minutes).to_i}
