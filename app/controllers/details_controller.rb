@@ -288,6 +288,7 @@ class DetailsController < ApplicationController
 
 		def authenticate_user
 			obj = {name:"",auth:false}
+			user_present = false
 			@user = User.find_by(name:params["username"])
 			if @user.present?
 				obj["name"] = params["username"]
@@ -297,10 +298,12 @@ class DetailsController < ApplicationController
 					data={name:params["username"]}
 					pay_load={data:data,exp: (Time.now+30.minutes).to_i}
 					token = JWT.encode(pay_load,secret,'HS256')
-					render json: {token:token},status: 200
+					render :json => {token:token} and return
+				else
+					render :json => {error:"wrong credentials",obj:[obj]} and return
 				end
 			else
-				render json: {obj:[obj]},status: 200
+				render :json => {error:"user doesnot exists",obj:[obj]} and return
 			end
 		end
 
