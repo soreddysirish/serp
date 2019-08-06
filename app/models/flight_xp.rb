@@ -1,0 +1,2 @@
+class FlightXp < ApplicationRecord
+end

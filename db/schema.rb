@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_30_072315) do
+ActiveRecord::Schema.define(version: 2019_08_06_051219) do
 
   create_table "aeq1_hotels_keywords", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "category_name"
@@ -79,6 +79,40 @@ ActiveRecord::Schema.define(version: 2019_07_30_072315) do
   end
 
   create_table "flight_india_q2s", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "category_name"
+    t.string "string"
+    t.integer "keyword_id"
+    t.string "url"
+    t.string "keyword"
+    t.string "language"
+    t.string "region"
+    t.string "type"
+    t.string "search_type"
+    t.string "exact_url_tracked"
+    t.integer "kw_start_position"
+    t.integer "target_position"
+    t.integer "google_page"
+    t.integer "google_rank"
+    t.text "google_rank_history"
+    t.integer "bing_rank"
+    t.integer "yahoo_rank"
+    t.string "is_favorite"
+    t.string "day_change"
+    t.string "week_change"
+    t.string "month_change"
+    t.string "life_change"
+    t.string "ranking_url"
+    t.string "seo_compete_pages"
+    t.integer "search_volume"
+    t.string "tags"
+    t.string "featured_url"
+    t.string "last_update"
+    t.integer "quater_period"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "flight_xps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "category_name"
     t.string "string"
     t.integer "keyword_id"
@@ -414,6 +448,40 @@ ActiveRecord::Schema.define(version: 2019_07_30_072315) do
   end
 
   create_table "temporaries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.string "category_name"
+    t.string "string"
+    t.integer "keyword_id"
+    t.string "url"
+    t.string "keyword"
+    t.string "language"
+    t.string "region"
+    t.string "type"
+    t.string "search_type"
+    t.string "exact_url_tracked"
+    t.integer "kw_start_position"
+    t.integer "target_position"
+    t.integer "google_page"
+    t.integer "google_rank"
+    t.text "google_rank_history"
+    t.integer "bing_rank"
+    t.integer "yahoo_rank"
+    t.string "is_favorite"
+    t.string "day_change"
+    t.string "week_change"
+    t.string "month_change"
+    t.string "life_change"
+    t.string "ranking_url"
+    t.string "seo_compete_pages"
+    t.integer "search_volume"
+    t.string "tags"
+    t.string "featured_url"
+    t.string "last_update"
+    t.integer "quater_period"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "temps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "category_name"
     t.string "string"
     t.integer "keyword_id"
