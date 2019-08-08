@@ -51,7 +51,7 @@ class DetailsController < ApplicationController
 				category_table_name = get_table_name(@category_name)
 				if category_table_name.present? && category_table_name !=""
 					keywords = category_table_name.all.pluck(:keyword).uniq
-
+					category_keyword_rankings = category_keyword_rankings(category_table_name)
 					category_details_obj = []
 					keywords.each do |kw|
 						start_date_records = category_table_name.where("keyword=? and Date(created_at) = ?",kw, "2019-07-02")
@@ -133,7 +133,7 @@ class DetailsController < ApplicationController
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types,category_keyword_rankings: category_keyword_rankings,total_count: keywords.count}
 				end
 
 				
@@ -149,6 +149,7 @@ class DetailsController < ApplicationController
 				# end
 			end
 		end
+		# [starting:{top-1:{keyword_count:22,mobile_keyword_count:11,desktop_keyword_count:11},2-3:{keyword_count:22,mobile_keyword_count:11,desktop_keyword_count:11},}current:{same}]
 		render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
 	end
 
@@ -257,6 +258,7 @@ class DetailsController < ApplicationController
 							end
 						end
 					end
+
 					start_date_total_keywords["unranked"] = start_unranked
 					current_date_total_keywords["unranked"] = current_unranked
 					start_date_total_keywords["rank_1"] = start_top_1/2 rescue 0
@@ -305,6 +307,98 @@ class DetailsController < ApplicationController
 			else
 				render :json => {error:"user doesnot exists",obj:[obj]} and return
 			end
+		end
+
+		def category_keyword_rankings(category_table_name)
+			start_date = "2019-07-02"
+			current_date =  Date.today.to_s(:db)
+
+			current_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem'","#{current_date}").group(:google_rank).count rescue {}
+			current_date_desktop_keywords = category_table_name.where("Date(created_at)=? and search_type='se'","#{current_date}").group(:google_rank).count rescue {}
+			start_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem' ","#{start_date}").group(:google_rank).count  rescue {}
+			start_date_desktop_keywords = category_table_name.where("Date(created_at)=? and search_type='se' ","#{start_date}").group(:google_rank).count  rescue {}
+			start_date_ranks = {"mobile_start_top_1" => 0, "mobile_start_top_2_3" => 0, "mobile_start_top_4_10" => 0, "mobile_start_above_10" => 0,"mobile_start_unranked"=>0,"desktop_start_top_1"=>0,"desktop_start_top_2_3"=>0,"desktop_start_top_4_10"=>0,"desktop_start_above_10"=>0,"desktop_start_unranked"=>0,"total_count"=>0}
+			current_date_ranks = {"mobile_current_top_1" => 0, "mobile_current_top_2_3" => 0, "mobile_current_top_4_10" => 0, "mobile_current_above_10" => 0,"mobile_current_unranked"=>0,"desktop_current_top_1"=>0,"desktop_current_top_2_3"=>0,"desktop_current_top_4_10"=>0,"desktop_current_above_10"=>0,"desktop_current_unranked"=>0,"total_count"=>0}
+			keywords_ranks = []
+
+		if start_date_mobile_keywords.nil? || start_date_desktop_keywords.nil?
+			start_date = "2019-07-25"
+			start_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem' ","#{start_date}").group(:google_rank).count  rescue {}
+			start_date_desktop_keywords = category_table_name.where("Date(created_at)=? and search_type='se' ","#{start_date}").group(:google_rank).count  rescue {}
+		end
+			if start_date_mobile_keywords.present?
+				not_tracked = []
+				start_date_mobile_keywords.each do|rank,value|
+					if rank==1
+						start_date_ranks["mobile_start_top_1"] += value
+					elsif rank==2 || rank==3
+						start_date_ranks["mobile_start_top_2_3"] += value
+					elsif rank > 3 && rank < 11
+						start_date_ranks["mobile_start_top_4_10"] += value
+					elsif rank > 10
+						start_date_ranks["mobile_start_above_10"] += value
+					else
+						not_tracked << value
+						start_date_ranks["mobile_start_unranked"] = not_tracked.reduce(:+) rescue 0
+					end
+				end
+			end
+			if start_date_desktop_keywords.present?
+				not_tracked = []
+				start_date_desktop_keywords.each do|rank,value|
+					if rank==1
+						start_date_ranks["desktop_start_top_1"] += value
+					elsif rank==2 || rank==3
+						start_date_ranks["desktop_start_top_2_3"] += value
+					elsif rank > 3 && rank < 11
+						start_date_ranks["desktop_start_top_4_10"] += value
+					elsif rank > 10
+						start_date_ranks["desktop_start_above_10"] += value
+					else
+						not_tracked << value
+						start_date_ranks["desktop_start_unranked"] = not_tracked.reduce(:+) rescue 0
+					end
+				end
+			end
+			start_date_ranks["total_count"] = start_date_mobile_keywords.count + start_date_desktop_keywords.count
+			if current_date_mobile_keywords.present?
+				not_tracked = []
+
+				current_date_mobile_keywords.each do|rank,value|
+					if rank==1
+						current_date_ranks["mobile_current_top_1"] += value
+					elsif rank==2 || rank==3
+						current_date_ranks["mobile_current_top_2_3"] += value
+					elsif rank > 3 && rank < 11
+						current_date_ranks["mobile_current_top_4_10"] += value
+					elsif rank > 10
+						current_date_ranks["mobile_current_above_10"] += value
+					else
+						not_tracked << value
+						current_date_ranks["mobile_current_unranked"] = not_tracked.reduce(:+) rescue 0
+					end
+				end
+			end
+			if current_date_desktop_keywords.present?
+				not_tracked = []
+				current_date_desktop_keywords.each do|rank,value|
+					if rank==1
+						current_date_ranks["desktop_current_top_1"] += value
+					elsif rank==2 || rank==3
+						current_date_ranks["desktop_current_top_2_3"] += value
+					elsif rank > 3 && rank < 11
+						current_date_ranks["desktop_current_top_4_10"] += value
+					elsif rank > 10
+						current_date_ranks["desktop_current_above_10"] += value
+					else
+						not_tracked << value
+						current_date_ranks["desktop_current_unranked"] = not_tracked.reduce(:+) rescue 0
+					end
+				end
+			end
+			current_date_ranks["total_count"] = current_date_mobile_keywords.count + current_date_desktop_keywords.count
+			keywords_ranks.push(start_date_ranks,current_date_ranks)
+			return  keywords_ranks
 		end
 
 		def get_table_name(key)
