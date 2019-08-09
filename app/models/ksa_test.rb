@@ -1,0 +1,2 @@
+class KsaTest < ApplicationRecord
+end

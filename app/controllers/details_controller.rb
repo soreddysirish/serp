@@ -298,7 +298,7 @@ class DetailsController < ApplicationController
 					obj['auth'] = true
 					secret = Rails.application.secrets.secret_key_base 
 					data={name:params["username"]}
-					pay_load={data:data,exp: (Time.now+30.minutes).to_i}
+					pay_load={data:data,exp: (Time.now+3600.minutes).to_i}
 					token = JWT.encode(pay_load,secret,'HS256')
 					render :json => {token:token} and return
 				else
@@ -449,6 +449,14 @@ class DetailsController < ApplicationController
 				table_name = TestingKsa
 			when "Temporary"
 				table_name = Temporary
+			when "Flight India - Q1"
+				table_name  = FlightIndiaQ1
+			when "FlightXP"
+				table_name = FlightXp
+			when "KSA Test"
+				table_name = KsaTest
+			when "Activities"
+				table_name = Activity
 			else
 				category_table_name = ""			
 			end
