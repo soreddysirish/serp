@@ -37,6 +37,8 @@ class DetailsController < ApplicationController
 			@category_name = params[:category_name].split("_").join(" ")
 			if @category_name == "Emirates UAE Campaign" 
 				@category_name = "Emirates - UAE Campaign" 
+			elsif @category_name == "Flight India Q1"
+				@category_name = "Flight India - Q1"
 			elsif @category_name == "Flight India Q2"
 				@category_name  = "Flight India - Q2"
 			elsif @category_name == "Visa UAE Q2"
