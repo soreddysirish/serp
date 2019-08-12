@@ -4,8 +4,8 @@ namespace :serp  do
 		# => develpment category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600") 
 		#=> production 
 		category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
-		# category_keys = category_list.keys
-		category_keys = ["Flight India - Q1"]
+		category_keys = category_list.keys
+		# category_keys = ["Flight India - Q1"]
 		category_keys.each_with_index do |model,index|
 			case model
 			when "AE Q1 Hotels Keywords"
@@ -76,23 +76,23 @@ namespace :serp  do
 			end
 		end
 				# follow this order only 
-				# Rake::Task["serp:update_IndiaHotel_category_table"].execute
+				Rake::Task["serp:update_IndiaHotel_category_table"].execute
 
-				# Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
+				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
 
-				# Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
+				Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
 
-				# Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
+				Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
 
-				# Rake::Task["serp:update_uae_domain_categories"].execute
+				Rake::Task["serp:update_uae_domain_categories"].execute
 
-				# Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
+				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
 
-				# Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
+				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
 
-				# Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
+				Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
 
-				# Rake::Task["serp:update_ksa_domain_categories"].execute
+				Rake::Task["serp:update_ksa_domain_categories"].execute
 	end
 	# run before  update_IndiaHotel_new_category_table task
 	task :update_IndiaHotel_category_table => :environment do 
