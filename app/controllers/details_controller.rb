@@ -125,7 +125,7 @@ class DetailsController < ApplicationController
 						ranks_obj["current_date_ranks"] = current_date_ranks
 						ranks_array << ranks_obj
 					end
-					if current_date_ranks["mobile_target_position"].to_i != 0 && current_date_ranks["desktop_target_position"].to_i != 0
+					if current_date_ranks["mobile_target_position"].to_i > 0 && current_date_ranks["desktop_target_position"].to_i > 0
 						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*100
 						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*100
 					else
