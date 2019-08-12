@@ -1,2 +1,2 @@
-class FlightXp < ApplicationRecord
+class FlightXP < ApplicationRecord
 end

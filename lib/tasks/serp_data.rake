@@ -4,7 +4,8 @@ namespace :serp  do
 		# => develpment category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600") 
 		#=> production 
 		category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
-		category_keys = category_list.keys
+		# category_keys = category_list.keys
+		category_keys = ["Flight India - Q1"]
 		category_keys.each_with_index do |model,index|
 			case model
 			when "AE Q1 Hotels Keywords"
@@ -49,11 +50,19 @@ namespace :serp  do
 				table_name = TestingKsa
 			when "Temporary"
 				table_name = Temporary
+			when "Activities"
+				table_name = Activity
+			when "Flight India - Q1"
+				table_name = FlightIndiaQ1
+			when "FlightXP"
+				table_name = FlightXP
+			when "MMT"
+				table_name = Mmt
 			else
 				table_name = ""			
 			end
 			if table_name.present?
-				table_name.where("created_at >=?",Time.now.beginning_of_day).delete_all
+				# table_name.where("created_at >=?",Time.now.beginning_of_day).delete_all
 				view_page_url = category_list[model] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
@@ -67,23 +76,23 @@ namespace :serp  do
 			end
 		end
 				# follow this order only 
-				Rake::Task["serp:update_IndiaHotel_category_table"].execute
+				# Rake::Task["serp:update_IndiaHotel_category_table"].execute
 
-				Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
+				# Rake::Task["serp:update_IndiaHotel_new_category_table"].execute
 
-				Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
+				# Rake::Task["serp:update_FlightIndiaQ2_category_table"].execute
 
-				Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
+				# Rake::Task["serp:update_UaeQ2Airline_category_table"].execute
 
-				Rake::Task["serp:update_uae_domain_categories"].execute
+				# Rake::Task["serp:update_uae_domain_categories"].execute
 
-				Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
+				# Rake::Task["serp:update_KsaEnglishQ2Airline_category_table"].execute
 
-				Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
+				# Rake::Task["serp:update_KsaArabicQ2_category_table"].execute
 
-				Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
+				# Rake::Task["serp:update_KsaArabicQ2_quater2_category_table"].execute
 
-				Rake::Task["serp:update_ksa_domain_categories"].execute
+				# Rake::Task["serp:update_ksa_domain_categories"].execute
 	end
 	# run before  update_IndiaHotel_new_category_table task
 	task :update_IndiaHotel_category_table => :environment do 
@@ -269,7 +278,7 @@ end
 
 
 
-	# rails g model  VisaUaeQ2 category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer 
+	# rails g model  Mmt category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer 
 
 # alter table visas add column region varchar(50) AFTER keyword,add column language varchar(10) AFTER keyword, add column google_page int AFTER kw_start_position, add column featured_url varchar(250) AFTER tags;
 

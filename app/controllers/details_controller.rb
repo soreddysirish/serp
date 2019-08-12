@@ -133,7 +133,7 @@ class DetailsController < ApplicationController
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types,category_keyword_rankings: category_keyword_rankings,total_count: keywords.count}
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,"cycle_changes": cycle_changes,"google_ranking_url": google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,"google_rank": google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 				end
 
 				
@@ -150,7 +150,7 @@ class DetailsController < ApplicationController
 			end
 		end
 		# [starting:{top-1:{keyword_count:22,mobile_keyword_count:11,desktop_keyword_count:11},2-3:{keyword_count:22,mobile_keyword_count:11,desktop_keyword_count:11},}current:{same}]
-		render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
+		render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys,category_keyword_rankings: category_keyword_rankings,total_count: keywords.count}
 	end
 
 	def overall_categories_view
@@ -446,9 +446,17 @@ class DetailsController < ApplicationController
 			when "UAE Q2 Generic"
 				category_table_name = UaeQ2Generic	
 			when "Testing KSA"
-				table_name = TestingKsa
+				category_table_name = TestingKsa
 			when "Temporary"
-				table_name = Temporary
+				category_table_name = Temporary
+			when "Activities"
+				category_table_name = Activity
+			when "Flight India - Q1"
+				category_table_name = FlightIndiaQ1
+			when "FlightXP"
+				category_table_name = FlightXP
+			when "MMT"
+				category_table_name = Mmt
 			else
 				category_table_name = ""			
 			end
