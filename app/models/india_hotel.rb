@@ -1,2 +1,0 @@
-class IndiaHotel < ApplicationRecord
-end

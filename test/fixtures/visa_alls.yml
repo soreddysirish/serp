@@ -1,0 +1,63 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  category_name: MyString
+  string: MyString
+  keyword_id: 1
+  url: MyString
+  keyword: MyString
+  language: MyString
+  region: MyString
+  type: 
+  search_type: MyString
+  exact_url_tracked: MyString
+  kw_start_position: 1
+  target_position: 1
+  google_page: 1
+  google_rank: 1
+  google_rank_history: MyText
+  bing_rank: 1
+  yahoo_rank: 1
+  is_favorite: MyString
+  day_change: MyString
+  week_change: MyString
+  month_change: MyString
+  life_change: MyString
+  ranking_url: MyString
+  seo_compete_pages: MyString
+  search_volume: 1
+  tags: MyString
+  featured_url: MyString
+  last_update: MyString
+  quater_period: 1
+
+two:
+  category_name: MyString
+  string: MyString
+  keyword_id: 1
+  url: MyString
+  keyword: MyString
+  language: MyString
+  region: MyString
+  type: 
+  search_type: MyString
+  exact_url_tracked: MyString
+  kw_start_position: 1
+  target_position: 1
+  google_page: 1
+  google_rank: 1
+  google_rank_history: MyText
+  bing_rank: 1
+  yahoo_rank: 1
+  is_favorite: MyString
+  day_change: MyString
+  week_change: MyString
+  month_change: MyString
+  life_change: MyString
+  ranking_url: MyString
+  seo_compete_pages: MyString
+  search_volume: 1
+  tags: MyString
+  featured_url: MyString
+  last_update: MyString
+  quater_period: 1

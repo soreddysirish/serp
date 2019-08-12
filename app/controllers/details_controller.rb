@@ -164,7 +164,8 @@ class DetailsController < ApplicationController
 		target_total_keywords ={}
 		categories_keys.each_with_index do |key,index|
 			category_name = key
-			category_table_name = get_table_name(key)
+			# category_table_name = get_table_name(key)
+			category_table_name = category_table(key)
 			if category_table_name.present? && category_table_name != ""
 				start_date = "2019-07-02"
 				current_date =  Date.today.to_s(:db)
@@ -310,7 +311,7 @@ class DetailsController < ApplicationController
 		end
 
 		def category_keyword_rankings(category_table_name)
-			start_date = "2019-07-02"
+			start_date = get_start_date(category_table_name)
 			current_date =  Date.today.to_s(:db)
 
 			current_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem'","#{current_date}").group(:google_rank).count rescue {}
@@ -321,11 +322,11 @@ class DetailsController < ApplicationController
 			current_date_ranks = {"mobile_current_top_1" => 0, "mobile_current_top_2_3" => 0, "mobile_current_top_4_10" => 0, "mobile_current_above_10" => 0,"mobile_current_unranked"=>0,"desktop_current_top_1"=>0,"desktop_current_top_2_3"=>0,"desktop_current_top_4_10"=>0,"desktop_current_above_10"=>0,"desktop_current_unranked"=>0,"total_count"=>0}
 			keywords_ranks = []
 
-		if start_date_mobile_keywords.nil? || start_date_desktop_keywords.nil?
-			start_date = "2019-07-25"
-			start_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem' ","#{start_date}").group(:google_rank).count  rescue {}
-			start_date_desktop_keywords = category_table_name.where("Date(created_at)=? and search_type='se' ","#{start_date}").group(:google_rank).count  rescue {}
-		end
+		# if start_date_mobile_keywords.nil? || start_date_desktop_keywords.nil?
+		# 	start_date = "2019-07-25"
+		# 	start_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem' ","#{start_date}").group(:google_rank).count  rescue {}
+		# 	start_date_desktop_keywords = category_table_name.where("Date(created_at)=? and search_type='se' ","#{start_date}").group(:google_rank).count  rescue {}
+		# end
 			if start_date_mobile_keywords.present?
 				not_tracked = []
 				start_date_mobile_keywords.each do|rank,value|
@@ -400,6 +401,22 @@ class DetailsController < ApplicationController
 			keywords_ranks.push(start_date_ranks,current_date_ranks)
 			return  keywords_ranks
 		end
+		def get_start_date(category_table_name)
+			start_date_first_record = category_table_name.first
+			start_date = start_date_first_record.created_at.to_date.to_s(:db)
+			return start_date
+		end
+		def category_table(k)
+			Rails.application.eager_load!
+			@model_array = ApplicationRecord.descendants.collect(&:name)
+			model_name = k.downcase.titleize.gsub(" ","").gsub("  ","").gsub("-","")
+				if @model_array.include?(model_name)
+					category_table_name = model_name.constantize
+				else
+					category_table_name = ""
+				end
+			return category_table_name
+		end
 
 		def get_table_name(key)
 			case key
@@ -412,7 +429,7 @@ class DetailsController < ApplicationController
 			when "India Flights"
 				category_table_name = IndiaFlight
 			when "India Hotels"
-				category_table_name = IndiaHotel
+				category_table_name = IndiaHotels
 			when "KSA Q1 Arabic Keywords"
 				category_table_name = Ksaq1ArabicKeyword
 			when "KSA Q1 Keywords"
@@ -432,15 +449,15 @@ class DetailsController < ApplicationController
 			when "KSA Arabic Q2"
 				category_table_name = KsaArabicQ2
 			when "KSA English Q2 Airlines"
-				category_table_name = KsaEnglishQ2Airline
+				category_table_name = KsaEnglishQ2Airlines
 			when "KSA English Q2 Booking"
 				category_table_name = KsaEnglishQ2Booking
 			when "KSA English Q2 Generic"
 				category_table_name = KsaEnglishQ2Generic
 			when "KSA English Q2 Offers"
-				category_table_name = KsaEnglishQ2Offer
+				category_table_name = KsaEnglishQ2Offers
 			when "UAE Q2 Airlines"
-				category_table_name = UaeQ2Airline
+				category_table_name = UaeQ2Airlines
 			when "UAE Q2 Airline Booking"
 				category_table_name = UaeQ2AirlineBooking
 			when "UAE Q2 Generic"
@@ -452,11 +469,11 @@ class DetailsController < ApplicationController
 			when "Flight India - Q1"
 				table_name  = FlightIndiaQ1
 			when "FlightXP"
-				table_name = FlightXp
+				table_name = Flightxp
 			when "KSA Test"
 				table_name = KsaTest
 			when "Activities"
-				table_name = Activity
+				table_name = Activities
 			else
 				category_table_name = ""			
 			end

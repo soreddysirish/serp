@@ -1,2 +1,0 @@
-class Temporary < ApplicationRecord
-end

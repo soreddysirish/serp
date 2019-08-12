@@ -1,2 +1,0 @@
-class IndiaFlight < ApplicationRecord
-end
