@@ -17,8 +17,8 @@ default: &default
 
 development:
   <<: *default
-  database: ct_serp_test
-  host: 13.250.127.183
+  database: ct_serp_production
+  host: 13.229.141.6
   username: flights
   password: ClearTripCalendar
 # Warning: The database defined as "test" will be erased and

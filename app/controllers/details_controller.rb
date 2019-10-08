@@ -37,6 +37,8 @@ class DetailsController < ApplicationController
 			@category_name = params[:category_name].split("_").join(" ")
 			if @category_name == "Emirates UAE Campaign" 
 				@category_name = "Emirates - UAE Campaign" 
+			elsif @category_name == "Flight India Q1"
+				@category_name = "Flight India - Q1"
 			elsif @category_name == "Flight India Q2"
 				@category_name  = "Flight India - Q2"
 			elsif @category_name == "Visa UAE Q2"
@@ -51,6 +53,7 @@ class DetailsController < ApplicationController
 				category_table_name = get_table_name(@category_name)
 				if category_table_name.present? && category_table_name !=""
 					keywords = category_table_name.all.pluck(:keyword).uniq
+
 					category_keyword_rankings = category_keyword_rankings(category_table_name)
 					category_details_obj = []
 					keywords.each do |kw|
@@ -122,7 +125,7 @@ class DetailsController < ApplicationController
 						ranks_obj["current_date_ranks"] = current_date_ranks
 						ranks_array << ranks_obj
 					end
-					if current_date_ranks["mobile_target_position"].to_i != 0 && current_date_ranks["desktop_target_position"].to_i != 0
+					if current_date_ranks["mobile_target_position"].to_i > 0 && current_date_ranks["desktop_target_position"].to_i > 0
 						mobile_rank_percentage = ((current_date_ranks["mobile_target_position"].to_f - current_date_ranks["mobile_rank"].to_f)/current_date_ranks["mobile_target_position"].to_f)*100
 						desktop_rank_percentage = ((current_date_ranks["desktop_target_position"].to_f - current_date_ranks["desktop_rank"].to_f)/current_date_ranks["desktop_target_position"].to_f)*100
 					else
@@ -133,10 +136,9 @@ class DetailsController < ApplicationController
 					percentage = {}
 					percentage["desktop_rank_percentage"] = desktop_rank_percentage.round(2) rescue 0 
 					percentage["mobile_rank_percentage"] = mobile_rank_percentage.round(2) rescue 0 
-					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,cycle_changes: cycle_changes,google_ranking_url: google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,google_rank: google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types,category_keyword_rankings: category_keyword_rankings,total_count: keywords.count}
+					category_details_obj << {"domain"=>domain,"category_name" => category_name,"tags" => tags,"keyword" => kw,"start_date_ranks" =>start_date_ranks,"current_date_ranks" => current_date_ranks,"percentage" => percentage,"search_volume" => search_volume,"kw_start_position" => kw_start_position,"google_rank_history"=> google_rank_history,"cycle_changes": cycle_changes,"google_ranking_url": google_ranking_url,"google_page" => google_page,"region" => region ,"language"=> language,"google_rank": google_rank,"bing_rank" => bing_rank,"yahoo_rank" => yahoo_rank,"types" => types}
 				end
 
-				
 				table_columns = category_table_name.column_names
 				table_columns.push("start_date","current_date")
 				heading_obj = {}
@@ -150,7 +152,7 @@ class DetailsController < ApplicationController
 			end
 		end
 		# [starting:{top-1:{keyword_count:22,mobile_keyword_count:11,desktop_keyword_count:11},2-3:{keyword_count:22,mobile_keyword_count:11,desktop_keyword_count:11},}current:{same}]
-		render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys}
+		render json: {category_details_obj:  category_details_obj,headings: column_headings,categories_keys: categories_keys,category_keyword_rankings: category_keyword_rankings,total_count: keywords.count}
 	end
 
 	def overall_categories_view
@@ -167,7 +169,7 @@ class DetailsController < ApplicationController
 			# category_table_name = get_table_name(key)
 			category_table_name = category_table(key)
 			if category_table_name.present? && category_table_name != ""
-				start_date = "2019-07-02"
+				start_date = get_start_date(category_table_name)
 				current_date =  Date.today.to_s(:db)
 					# total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").pluck(:keyword) rescue []
 					total_keywords = category_table_name.where("Date(created_at)=?","#{current_date}").group(:search_type,:keyword).pluck(:keyword) rescue []
@@ -187,10 +189,10 @@ class DetailsController < ApplicationController
 				category_table_current_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:google_rank).count rescue {}
 				category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count  rescue {}
 				target_grouped = category_table_name.where("Date(created_at)=?","#{current_date}").group(:target_position).count rescue {}
-				unless category_table_start_grouped.present?  
-					start_date = "2019-07-25"
-					category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
-				end
+				# unless category_table_start_grouped.present?  
+				# 	start_date = "2019-07-25"
+				# 	category_table_start_grouped = category_table_name.where("Date(created_at)=?","#{start_date}").group(:google_rank).count
+				# end
 					# current_date_records = category_table_name.where("Date(created_at)=?","#{current_date}")
 					current_unranked = 0
 					current_top_1 = 0
@@ -313,7 +315,6 @@ class DetailsController < ApplicationController
 		def category_keyword_rankings(category_table_name)
 			start_date = get_start_date(category_table_name)
 			current_date =  Date.today.to_s(:db)
-
 			current_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem'","#{current_date}").group(:google_rank).count rescue {}
 			current_date_desktop_keywords = category_table_name.where("Date(created_at)=? and search_type='se'","#{current_date}").group(:google_rank).count rescue {}
 			start_date_mobile_keywords = category_table_name.where("Date(created_at)=? and search_type='sem' ","#{start_date}").group(:google_rank).count  rescue {}
@@ -418,6 +419,11 @@ class DetailsController < ApplicationController
 			return category_table_name
 		end
 
+		def get_start_date(category_table_name)
+			start_date_first_record = category_table_name.first rescue ""
+			start_date = start_date_first_record.created_at.to_date.to_s(:db) rescue ""
+			return start_date
+		end
 		def get_table_name(key)
 			case key
 			when "AE Q1 Hotels Keywords"
@@ -439,7 +445,7 @@ class DetailsController < ApplicationController
 			when "UAE Q1 Keywords"
 				category_table_name= Uaeq1Keyword
 			when "Visa All"
-				category_table_name = Visa
+				category_table_name = VisaAll
 			when "Visa UAE - Q2"
 				category_table_name = VisaUaeQ2
 			when  "Visa UAE Q2"
@@ -463,7 +469,7 @@ class DetailsController < ApplicationController
 			when "UAE Q2 Generic"
 				category_table_name = UaeQ2Generic	
 			when "Testing KSA"
-				table_name = TestingKsa
+				category_table_name = TestingKsa
 			when "Temporary"
 				table_name = Temporary
 			when "Flight India - Q1"

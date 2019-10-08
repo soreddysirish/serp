@@ -1,27 +1,16 @@
 namespace :serp  do
 	
 	task get_categories: :environment do 
-		# def create_table(model_name)
-		# 	sh "rails g model  #{model_name} category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer "
-		# 		Rake::Task['db:migrate'].invoke
-		# 		puts "created table - #{model_name}"
-		# end
-
-		# => develpment category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=d3f28ee6533cfffa743ce5630ca35600") 
-		#=> production 
 		
 		category_list = HTTParty.get("https://serpbook.com/serp/api/?action=getcategories&auth=ebc64c6dd0c89693e2609644fc421142")
 
 		Rails.application.eager_load!
 		@model_array = ApplicationRecord.descendants.collect(&:name)
-		# existing_tables = ActiveRecord::Base.connection.tables - ["ar_internal_metadata","schema_migrations"]
-		# models = existing_tables.map{|t| t.singularize.camelize.constantize }
 		category_keys = category_list.keys
-		# category_keys = []
 		category_keys.each do |k|
 			model_name = k.downcase.titleize.gsub(" ","").gsub("  ","").gsub("-","")
 			table_name = k.downcase.gsub("  "," ").gsub(" ","_").gsub("-","")
-			if !@model_array.include?(model_name)
+			unless @model_array.include?(model_name)
 				puts "#{model_name} --- #{k}"
 				system "rails g model  #{model_name} category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer " rescue next
 				Rake::Task['db:migrate'].invoke 
@@ -29,7 +18,7 @@ namespace :serp  do
 			end
 			if model_name.present?
 				model_name = model_name.constantize
-				model_name.where("created_at >=?",Time.now.beginning_of_day).delete_all
+				model_name.where("created_at >=?",Time.now.beginning_of_day).delete_all 
 				view_page_url = category_list[k] rescue ""
 				if view_page_url.present?
 					view_page_res = HTTParty.get(view_page_url) rescue ""
@@ -242,10 +231,9 @@ namespace :serp  do
 			model_name = k.downcase.titleize.gsub(" ","").gsub("  ","").gsub("-","")
 			table_name = k.downcase.gsub("  "," ").gsub(" ","_").gsub("-","")
 			if !@model_array.include?(model_name) 
-				sh "rails g model  #{table_name} category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer "
+				sh "rails g model  #{table_name} category_name keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer "
 				Rake::Task['db:migrate'].invoke
 				puts "created table - #{table_name}"
-
 			end
 		end
 	end
@@ -263,6 +251,7 @@ end
   
 
   # create table flight_ind(category_name varchar(100),keyword_id int, url varchar(100),keyword varchar(100),language varchar(50),region varchar(50),type varchar(10),search_type varchar(10),exact_url_tracked varchar(100),kw_start_position int,target_position int,google_page int, google_rank int, google_rank_history text, bing_rank int, yahoo_rank int, is_favorite varchar(10),day_change varchar(10),week_change varchar(10),month_change varchar(10),life_change varchar(10),ranking_url varchar(100),seo_compete_pages varchar(20),search_volume int,tags varchar(50),featured_url varchar(30),last_update varchar(250),quater_period int,created_at TIMESTAMP,updated_at TIMESTAMP);
+	# rails g model  Mmt category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer 
 
 	# rails g model  KsaTest category_name string keyword_id:integer url keyword language region type search_type exact_url_tracked kw_start_position:integer target_position:integer google_page:integer  google_rank:integer google_rank_history:text  bing_rank:integer  yahoo_rank:integer is_favorite day_change week_change month_change life_change ranking_url seo_compete_pages search_volume:integer tags featured_url last_update quater_period:integer 
 	

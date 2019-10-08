@@ -1,2 +1,0 @@
-class FlightXP < ApplicationRecord
-end

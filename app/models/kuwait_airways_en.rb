@@ -1,0 +1,2 @@
+class KuwaitAirwaysEn < ApplicationRecord
+end
